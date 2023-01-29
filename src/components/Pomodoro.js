@@ -99,13 +99,14 @@ export class Pomodoro extends React.Component {
     getTimeRemainsFormat(timeRemains) {
         let dateObj = new Date(Math.abs(timeRemains));
 
-        let hours = dateObj.getUTCHours();
+        // let hours = dateObj.getUTCHours();
         let minutes = dateObj.getUTCMinutes();
         let seconds = dateObj.getSeconds();
         
-        return (timeRemains < 0 ? "-" : "") + hours.toString().padStart(2, '0')
-            + ':' + minutes.toString().padStart(2, '0')
-            + ':' + seconds.toString().padStart(2, '0');
+        return (timeRemains < 0 ? "-" : "") 
+            // + hours.toString().padStart(2, '0') + ':' 
+            + minutes.toString().padStart(2, '0') + ':' 
+            + seconds.toString().padStart(2, '0');
     }
 
     makeButton(state, timeRemains) {
@@ -127,18 +128,18 @@ export class Pomodoro extends React.Component {
     render() {
         let timeRemains = this.getTimeRemains();
         let timeRemainsString = this.getTimeRemainsFormat(timeRemains);
+        document.title = timeRemainsString + " - Calendoro";
 
         let button = this.makeButton(this.state.state, timeRemains);
 
         return (
-            <div className="h-100">
-                <div className="pomodoro">
+            <div className="pomodoro">
+                <div className="h-100 d-flex flex-column justify-content-around">
                     <State states={["Focus", "Short Break", "Long Break"]} active={this.state.state}></State>
-                    <div className="display-1 d-flex justify-content-center"> {timeRemainsString} </div>
+                    
+                    <div className="time-remains display-1 d-flex justify-content-center"> {timeRemainsString} </div>
 
-                    <div className="d-flex justify-content-center">
-                        {button}
-                    </div>
+                    <div className="d-flex justify-content-center">{button}</div>
                 </div>
             </div>
         )

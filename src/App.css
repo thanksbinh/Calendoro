@@ -1,0 +1,54 @@
+:root {
+    --color-red: rgb(186, 73, 73);
+}
+
+.container-fluid {
+    background-color: var(--color-red);
+    
+}
+
+.navbar {
+    padding: 10px 0;
+}
+
+.logo {
+    text-decoration: none !important;
+    color: white;
+}
+
+.logo span {
+    padding: 2px 5px;
+}
+
+.logo h2 {
+    font-size: 24px;
+}
+
+.pomodoro {
+    background-color: rgba(255, 255, 255, 0.1);
+    height: 302px;
+    width: 480px;
+    padding: 20px 0;
+    margin: 40px 0 ;
+    border-radius: 6px;
+}
+
+.list-group-item {
+    background-color: transparent;
+    border-color: transparent;
+    color: white;
+}
+
+.list-group-item.active {
+    background-color: var(--color-red);
+    border-color: var(--color-red);
+}
+
+.time-remains {
+    font-size: 120px;
+    font-weight: bold;
+}
+
+.main-btn {
+    color: var(--color-red);
+}
