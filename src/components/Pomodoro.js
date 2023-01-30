@@ -31,7 +31,7 @@ export class Pomodoro extends React.Component {
             this.setState({
                 curTime : new Date(),
             })
-        }, 1)
+        }, 1000)
     }
 
     updateHistory() {
