@@ -20,6 +20,7 @@
     "npm-check-updates": "^16.6.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-jquery-plugin": "^1.1.7",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

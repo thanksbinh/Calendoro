@@ -2,9 +2,13 @@
     --color-red: rgb(186, 73, 73);
 }
 
+a {
+    text-decoration: none;
+    color: white;
+}
+
 .container-fluid {
     background-color: var(--color-red);
-    height: 750px;
 }
 
 .navbar {
@@ -22,6 +26,10 @@
 
 .logo h2 {
     font-size: 24px;
+}
+
+.goal:hover {
+    cursor: pointer;
 }
 
 .pomodoro {
@@ -53,6 +61,16 @@
     color: var(--color-red);
 }
 
+.fullcalendar {
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 6px;
+}
+
+::-webkit-scrollbar {
+    width: 0;
+}
+
 /* width */
 .fullcalendar ::-webkit-scrollbar {
     width: 20px;
@@ -72,5 +90,5 @@
 
 /* Handle on hover */
 .fullcalendar ::-webkit-scrollbar-thumb:hover {
-    background: #b30000;     
+    background: rgba(255, 255, 255, 0.1);     
 }

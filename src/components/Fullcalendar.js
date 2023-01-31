@@ -2,30 +2,29 @@ import React from "react";
 import FullCalendar from '@fullcalendar/react';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import googleCalendarPlugin from '@fullcalendar/google-calendar';
-import moment from 'moment/moment';
-
-// fix this!
-let gCalendarRef;
 
 export class Fullcalendar extends React.Component {
     constructor(props) {
         super(props);
         this.calendarRef = props.calendarRef;
-        gCalendarRef = this.calendarRef;
+    }
+
+    refresh() {
+        this.calendarRef.current.getApi().refetchEvents();
     }
 
     render() {
-        let scrollTime = moment().format("HH") + ":00:00";
+        let scrollTime = (new Date().getHours() - 2).toString().padStart(2, '0') + ":00:00";
 
         return (
-            <div className='fullcalendar'>
+            <div>
                 <FullCalendar
                     plugins={[ timeGridPlugin, googleCalendarPlugin ]}
                     ref={this.calendarRef}
-                    initialView="timeGridDay"
+                    initialView="timeGridWeek"
                     googleCalendarApiKey='AIzaSyBIhX1U9MrmqfpYT_GDGTcS6cEZh3jzpDY'
                     eventSources={[
-                        {googleCalendarId: 'adulii4v76p76cupo4ccdctvj0@group.calendar.google.com'}
+                        {googleCalendarId: 'adulii4v76p76cupo4ccdctvj0@group.calendar.google.com', color: 'rgba(255, 255, 255, 0.1)'}
                     ]}
                     nowIndicator={true}
                     allDaySlot={false}
@@ -33,15 +32,15 @@ export class Fullcalendar extends React.Component {
                     customButtons={{
                         myCustomButton: {
                             text: 'Refresh',
-                            click: function() {
-                                gCalendarRef.current.getApi().refetchEvents();
-                            }
+                            click: this.refresh.bind(this)
                         }
                     }}
                     headerToolbar={{
                         left: 'myCustomButton',
                         center: 'title',
                     }}
+                    aspectRatio={2.7}
+                    firstDay={1}
                 />
             </div>
         )
