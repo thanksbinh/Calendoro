@@ -59,6 +59,20 @@ a {
 
 .main-btn {
     color: var(--color-red);
+    display: block;
+}
+
+@keyframes shaker {
+	0% { -webkit-transform: translate(2px, 0); }
+	50% { -webkit-transform: translate(-2px, 0); }
+	100% { -webkit-transform: translate(2px, 0); }
+}
+
+.shake {
+	-webkit-animation-name: shaker;
+	-webkit-animation-duration: 0.1s;
+	-webkit-transform-origin:50% 50%;
+	-webkit-animation-timing-function: linear;
 }
 
 .fullcalendar {
@@ -91,4 +105,23 @@ a {
 /* Handle on hover */
 .fullcalendar ::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 255, 255, 0.1);     
+}
+
+.task {
+    margin-bottom: 40px;
+}
+
+.taskInput {
+    background-color: transparent;
+    color: white;
+    border: 0;
+    text-align: center;
+}
+
+.taskInput:focus {
+    outline: none;
+}
+
+::placeholder { 
+    color: white;
 }

@@ -3,6 +3,7 @@ import { Navbar } from './components/Navbar';
 import { Pomodoro } from './components/Pomodoro';
 import { Fullcalendar } from './components/Fullcalendar';
 import { TodayGoal } from './components/TodayGoal';
+import { Task } from './components/Task';
 
 export class App extends React.Component {
     calendarRef = React.createRef()
@@ -24,6 +25,9 @@ export class App extends React.Component {
                 </details>
                 <div className="d-flex justify-content-center">
                     <Pomodoro/>
+                </div>
+                <div className="d-flex justify-content-center">
+                    <Task/>
                 </div>
             </div>
         )

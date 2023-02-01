@@ -10,7 +10,7 @@ export const State = (props) => {
     }
 
     return (
-        <ul className="list-group list-group-horizontal d-flex justify-content-center">
+        <ul className="list-group list-group-horizontal">
             {elements.map((el) => el)}
         </ul>
     )
