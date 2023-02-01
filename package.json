@@ -2,14 +2,25 @@
   "name": "calendoro",
   "version": "0.1.0",
   "private": true,
+  "devDependencies": {
+    "react-scripts": "^5.0.1"
+  },
   "dependencies": {
+    "@fullcalendar/core": "^6.1.0",
+    "@fullcalendar/daygrid": "^6.0.3",
+    "@fullcalendar/google-calendar": "^6.0.3",
+    "@fullcalendar/react": "^6.0.4",
+    "@fullcalendar/timegrid": "^6.1.0",
+    "@react-oauth/google": "^0.6.1",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "fullcalendar": "^6.0.3",
+    "moment": "^2.29.4",
+    "npm-check-updates": "^16.6.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-google-login": "^5.2.2",
-    "react-scripts": "^5.0.1",
+    "react-jquery-plugin": "^1.1.7",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
