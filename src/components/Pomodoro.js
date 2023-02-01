@@ -1,6 +1,7 @@
 import React from "react";
 import { Button } from "./Button";
 import { State } from "./State";
+import { Clock } from "./Clock";
 
 export class Pomodoro extends React.Component {
     constructor(props) {
@@ -31,20 +32,39 @@ export class Pomodoro extends React.Component {
             this.setState({
                 curTime : new Date(),
             })
-        }, 1000)
+        }, 1)
     }
 
     updateHistory() {
+        if (this.state.state !== 'Focus') return;
+
+        let task = document.querySelector('.taskInput').value;
         let object = {  "Start": this.state.startTime, 
                         "Durration": this.state.curTime - this.state.startTime, 
-                        "State": this.state.state
+                        "Task": task
                     }; 
         this.state.history.push(object);
 
         console.log(this.state.history);
     }
 
+    checkTask() {
+        let taskInputEl = document.querySelector('.taskInput');
+        let mainBtnEl = document.querySelector('.main-btn');
+
+        if (taskInputEl.value === '') {
+            taskInputEl.focus();
+            mainBtnEl.classList.toggle('shake');
+            setTimeout(() => {
+                mainBtnEl.classList.toggle('shake')
+            }, 1000)
+            return false;
+        }
+        return true;
+    }
+
     onFocus() {
+        if (!this.checkTask()) return;
         this.updateHistory();
 
         this.setState({
@@ -109,6 +129,7 @@ export class Pomodoro extends React.Component {
             + seconds.toString().padStart(2, '0');
     }
 
+    // Todo: improve
     makeButton(state, timeRemains) {
         if (state !== "" && timeRemains > 0) {
             return <Button click={this.onEnd.bind(this)} value={"End"}/>
@@ -125,21 +146,21 @@ export class Pomodoro extends React.Component {
         }
     }
 
+    changeTitle(newTitle) {
+        document.title = newTitle;
+    }
+
     render() {
         let timeRemains = this.getTimeRemains();
         let timeRemainsString = this.getTimeRemainsFormat(timeRemains);
-        document.title = timeRemainsString + " - Calendoro";
-
-        let button = this.makeButton(this.state.state, timeRemains);
+        this.changeTitle(timeRemainsString + " - Calendoro")
 
         return (
             <div className="pomodoro">
-                <div className="h-100 d-flex flex-column justify-content-around">
+                <div className="h-100 d-flex flex-column justify-content-around align-items-center">
                     <State states={["Focus", "Short Break", "Long Break"]} active={this.state.state}></State>
-                    
-                    <div className="time-remains display-1 d-flex justify-content-center"> {timeRemainsString} </div>
-
-                    <div className="d-flex justify-content-center">{button}</div>
+                    <Clock value={timeRemainsString}></Clock>
+                    {this.makeButton(this.state.state, timeRemains)}
                 </div>
             </div>
         )
