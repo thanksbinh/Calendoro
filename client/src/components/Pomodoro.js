@@ -39,13 +39,14 @@ export class Pomodoro extends React.Component {
         if (this.state.state !== 'Focus') return;
 
         let task = document.querySelector('.taskInput').value;
-        let object = {  "Start": this.state.startTime, 
+        let object = {  "UserId": "02",
+                        "Start": this.state.startTime, 
                         "Durration": this.state.curTime - this.state.startTime, 
                         "Task": task
                     }; 
         this.state.history.push(object);
 
-        console.log(this.state.history);
+        console.log(object);
     }
 
     checkTask() {

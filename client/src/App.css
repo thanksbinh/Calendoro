@@ -9,10 +9,15 @@ a {
 
 .container-fluid {
     background-color: var(--color-red);
+    min-height: 1000px;
 }
 
 .navbar {
     padding: 10px 0;
+}
+
+.flex-item {
+    flex: 1 1 0; 
 }
 
 .logo {
@@ -30,6 +35,35 @@ a {
 
 .goal:hover {
     cursor: pointer;
+}
+
+.toggle-calendar-btn:hover {
+    cursor: pointer;
+}
+
+.setting-btn:hover {
+    cursor: pointer;
+}
+
+.btn-select {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 50%;
+}
+
+.fullcalendar {
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 6px;
+    visibility: hidden;
+    opacity: 0;
+    height: 0;
+    transition: opacity 0.6s linear;
+}
+
+.fullcalendar.show {
+    visibility: visible;
+    height: 100%;
+    opacity: 1;
 }
 
 .pomodoro {
@@ -73,12 +107,6 @@ a {
 	-webkit-animation-duration: 0.1s;
 	-webkit-transform-origin:50% 50%;
 	-webkit-animation-timing-function: linear;
-}
-
-.fullcalendar {
-    background-color: rgba(255, 255, 255, 0.1);
-    padding: 20px;
-    border-radius: 6px;
 }
 
 ::-webkit-scrollbar {

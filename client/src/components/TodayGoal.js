@@ -26,8 +26,8 @@ export class TodayGoal extends React.Component {
 
     render() {
         return (
-            <div className='goal' onClick={()=> this.getTodayGoal()}>
-                <div> Today's goal: <span className="goalNum">{this.state.todayGoal}</span> Pomodoros</div>
+            <div className='goal text-center' onClick={()=> this.getTodayGoal()}>
+                <div> Today's remaining: <span className="goalNum">{this.state.todayGoal}</span> Reps</div>
             </div>
         )
     }
