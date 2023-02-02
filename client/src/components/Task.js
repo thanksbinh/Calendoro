@@ -5,8 +5,8 @@ export class Task extends React.Component {
 
     render() {
         return (
-            <div className='task'>
-                <input className="taskInput" placeholder="What're you working on?" onFocus={this.handleFocus}/>
+            <div className='task w-50'>
+                <input className="taskInput w-100" placeholder="What're you working on?" onFocus={this.handleFocus}/>
             </div>
         )
     }

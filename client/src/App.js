@@ -29,6 +29,11 @@ export class App extends React.Component {
                 <div className="d-flex justify-content-center">
                     <Task/>
                 </div>
+                <div className="d-flex justify-content-center">
+                    <form action="../../post" method="post" className="form">
+                        <button type="submit">Connected?</button>
+                    </form>
+                </div>
             </div>
         )
     }
