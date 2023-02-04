@@ -1,55 +1,63 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import PropTypes from 'prop-types';
+import useSound from 'use-sound';
+import toneSound from '../assets/sounds/tone.wav';
 import { Button } from "./Button";
 import { State } from "./State";
 import { Clock } from "./Clock";
 
-export class Pomodoro extends React.Component {
-    constructor(props) {
-        super(props);
+export function Pomodoro(props) {
+    const [state, setState] = useState("");
+    const [curTime, setCurTime] = useState(new Date());
+    const [startTime, setStartTime] = useState(new Date());
+    const [focusCount, setFocusCount] = useState(0);
+    const [play] = useSound(toneSound, {volume: 0.8});
 
-        let focusDurMin = 25;
-        let shortBreakDurMin = 5;
-        let longBreakDurMin = 25;
+    let bonusTime = 0;
+    let history = [];
 
-        this.focusCount = 4;
-        this.bonusTime = 0;
+    let timeRemains = getTimeRemains();
+    let timeRemainsString = getTimeRemainsFormat(timeRemains);
 
-        this.state = {
-            curTime: new Date(),
-            startTime: new Date(),
-
-            focusDur: focusDurMin*60*1000,
-            shortBreakDur: shortBreakDurMin*60*1000,
-            longBreakDur: longBreakDurMin*60*1000,
-
-            state: "",
-            history: [],
-        };
-    }
-
-    componentDidMount() {
+    useEffect(() => {
         setInterval(() => {
-            this.setState({
-                curTime : new Date(),
-            })
-        }, 1)
+            setCurTime(new Date());
+        }, 10)
+    }, [])
+
+    useEffect(() => {
+        props.passState(state);
+    }, [props, state])
+
+    useEffect(() => {
+        changeTitle(timeRemainsString + " - " + getTask());
+        if (timeRemainsString === "00:00") {
+            play();
+        }
+    }, [timeRemainsString, play])
+
+    function getTask() {
+        let taskInput = document.querySelector('.taskInput').value;
+        return taskInput ? taskInput : "Calendoro"
     }
 
-    updateHistory() {
-        if (this.state.state !== 'Focus') return;
+    function changeTitle(newTitle) {
+        document.title = newTitle;
+    }
 
-        let task = document.querySelector('.taskInput').value;
+    function updateHistory() {
         let object = {  "UserId": "02",
-                        "Start": this.state.startTime, 
-                        "Durration": this.state.curTime - this.state.startTime, 
-                        "Task": task
+                        "Start": startTime, 
+                        "Durration": curTime - startTime, 
+                        "Task": getTask()
                     }; 
-        this.state.history.push(object);
+        // Post to backend
+        history.push(object);
 
         console.log(object);
     }
 
-    checkTask() {
+    function checkTask() {
         let taskInputEl = document.querySelector('.taskInput');
         let mainBtnEl = document.querySelector('.main-btn');
 
@@ -57,68 +65,66 @@ export class Pomodoro extends React.Component {
             taskInputEl.focus();
             mainBtnEl.classList.toggle('shake');
             setTimeout(() => {
-                mainBtnEl.classList.toggle('shake')
-            }, 1000)
+                mainBtnEl.classList.toggle('shake');
+            }, 1000);
             return false;
         }
         return true;
     }
 
-    onFocus() {
-        if (!this.checkTask()) return;
-        this.updateHistory();
+    function onFocus() {
+        if (!checkTask()) return;
 
-        this.setState({
-            startTime: this.state.curTime,
-            state: "Focus",
-        })
+        bonusTime = getTimeRemains();
+
+        setStartTime(curTime);
+        setState("Focus");
     }
 
-    onShortBreak() {
-        this.updateHistory();
+    function onShortBreak() {
+        updateHistory();
 
-        this.focusCount--;
+        setFocusCount(focusCount+1);
+        bonusTime = -getTimeRemains() / 5;
 
-        this.setState({
-            startTime: this.state.curTime,
-            state: "Short Break",
-        })
+        setStartTime(curTime);
+        setState("Short Break");
     }
 
-    onLongBreak() {
-        this.updateHistory();
+    function onLongBreak() {
+        updateHistory();
 
-        this.focusCount = 4;
+        setFocusCount(0);
+        bonusTime = -getTimeRemains() / 5;
 
-        this.setState({
-            startTime: this.state.curTime,
-            state: "Long Break",
-        })
+        setStartTime(curTime);
+        setState("Long Break");
     }
 
-    onEnd() {
-        this.updateHistory();
+    function onEnd() {
+        updateHistory();
 
-        this.setState({
-            state: "",
-        })
+        setFocusCount(0);
+
+        setState("");
     }
 
-    getTimeRemains() {
-        switch (this.state.state) {
+    function getTimeRemains() {
+        switch (state) {
             case "Focus":
-                return this.state.focusDur - (this.state.curTime - this.state.startTime);
+                return props.focusDur - (curTime - startTime);
             case "Short Break":
-                return this.state.shortBreakDur - (this.state.curTime - this.state.startTime);
+                return props.shortBreakDur - (curTime - startTime) + bonusTime;
             case "Long Break":
-                return this.state.longBreakDur - (this.state.curTime - this.state.startTime);
+                return props.longBreakDur - (curTime - startTime) + bonusTime;
             default:
-                return 25*60*1000;
+                return props.focusDur;
         };
     }
 
-    getTimeRemainsFormat(timeRemains) {
-        let dateObj = new Date(Math.abs(timeRemains));
+    function getTimeRemainsFormat(timeRemains) {
+        let secondsRemain = Math.floor(timeRemains/1000);
+        let dateObj = new Date(Math.abs(secondsRemain*1000));
 
         // let hours = dateObj.getUTCHours();
         let minutes = dateObj.getUTCMinutes();
@@ -129,41 +135,28 @@ export class Pomodoro extends React.Component {
             + minutes.toString().padStart(2, '0') + ':' 
             + seconds.toString().padStart(2, '0');
     }
-
-    // Todo: improve
-    makeButton(state, timeRemains) {
-        if (state !== "" && timeRemains > 0) {
-            return <Button click={this.onEnd.bind(this)} value={"End"}/>
-        } else if (state === "") {
-            return <Button click={this.onFocus.bind(this)} value={"Focus"}/>
-        } else if (state === "Focus") {
-            if (this.focusCount > 1) {
-                return <Button click={this.onShortBreak.bind(this)} value={"Short Break"}/>
-            } else {
-                return <Button click={this.onLongBreak.bind(this)} value={"Long Break"}/>
-            }
-        } else if (state === "Short Break" || state === "Long Break") {
-            return <Button click={this.onFocus.bind(this)} value={"Focus"}/>
-        }
-    }
-
-    changeTitle(newTitle) {
-        document.title = newTitle;
-    }
-
-    render() {
-        let timeRemains = this.getTimeRemains();
-        let timeRemainsString = this.getTimeRemainsFormat(timeRemains);
-        this.changeTitle(timeRemainsString + " - Calendoro")
-
-        return (
-            <div className="pomodoro">
-                <div className="h-100 d-flex flex-column justify-content-around align-items-center">
-                    <State states={["Focus", "Short Break", "Long Break"]} active={this.state.state}></State>
-                    <Clock value={timeRemainsString}></Clock>
-                    {this.makeButton(this.state.state, timeRemains)}
+    
+    return (
+        <div className="pomodoro">
+            <div className="h-100 d-flex flex-column justify-content-around align-items-center">
+                <State states={["Focus", "Short Break", "Long Break"]} active={state}></State>
+                <Clock value={timeRemainsString}></Clock>
+                <div className="d-flex gap-2">
+                    {state === "Focus" ? 
+                        (focusCount+1 !== props.maxFocusCount ? 
+                            <Button click={onShortBreak} value={"Short Break"}/> : 
+                            <Button click={onLongBreak} value={"Long Break"}/>) :
+                        <Button click={onFocus} value={"Focus"}/>}
+                    <Button click={onEnd} value={"End"}/>
                 </div>
             </div>
-        )
-    }
+        </div>
+    )
+}
+
+Pomodoro.protoType = {
+    focusDur: PropTypes.number.isRequired,
+    shortBreakDur: PropTypes.number.isRequired,
+    longBreakDur: PropTypes.number.isRequired,
+    maxFocusCount: PropTypes.number.isRequired,
 }
