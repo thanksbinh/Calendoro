@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {  useState } from 'react';
 import { Navbar } from './components/Navbar';
 import { Pomodoro } from './components/Pomodoro';
 import { Fullcalendar } from './components/Fullcalendar';
@@ -6,7 +6,6 @@ import { Task } from './components/Task';
 
 export function App() {
     const [state, setState] = useState('');
-
     const calendarRef = React.createRef();
 
     function passState(state) {
@@ -21,7 +20,6 @@ export function App() {
             <div className='fullcalendar'>
                 <Fullcalendar calendarRef={calendarRef}/>
             </div>
-            
             <div className="d-flex justify-content-center">
                 <Pomodoro focusDur={25*60*1000} shortBreakDur={5*1000} longBreakDur={15*60*1000} maxFocusCount={4} passState={passState}/>
             </div>

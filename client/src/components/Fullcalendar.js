@@ -1,4 +1,5 @@
 import React from "react";
+import axios from "axios";
 import FullCalendar from '@fullcalendar/react';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import googleCalendarPlugin from '@fullcalendar/google-calendar';
@@ -18,7 +19,11 @@ export function Fullcalendar(props) {
                 initialView="timeGridWeek"
                 googleCalendarApiKey='AIzaSyBIhX1U9MrmqfpYT_GDGTcS6cEZh3jzpDY'
                 eventSources={[
-                    {googleCalendarId: 'adulii4v76p76cupo4ccdctvj0@group.calendar.google.com', color: 'rgba(255, 255, 255, 0.1)'}
+                    {googleCalendarId: 'adulii4v76p76cupo4ccdctvj0@group.calendar.google.com', color: 'rgba(255, 255, 255, 0.1)'},
+                    {events: async function() {
+                        const res = await axios.get("http://localhost:3001/post");
+                        return res.data;
+                    }, color: 'rgba(0, 0, 0, 0.1)'}
                 ]}
                 nowIndicator={true}
                 allDaySlot={false}
@@ -35,6 +40,7 @@ export function Fullcalendar(props) {
                 }}
                 aspectRatio={2.7}
                 firstDay={1}
+                slotEventOverlap={false}
             />
         </div>
     )

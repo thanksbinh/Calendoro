@@ -33,10 +33,6 @@ a {
     font-size: 24px;
 }
 
-.goal:hover {
-    cursor: pointer;
-}
-
 .toggle-calendar-btn:hover {
     cursor: pointer;
 }
