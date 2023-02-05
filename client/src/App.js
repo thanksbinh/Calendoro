@@ -26,11 +26,6 @@ export function App() {
             <div className="d-flex justify-content-center">
                 <Task isDisabled={state === "Focus"}/>
             </div>
-            <div className="d-flex justify-content-center pb-5">
-                <form action="../../post" method="post" className="form">
-                    <button type="submit">Connected?</button>
-                </form>
-            </div>
         </div>
     )
 }

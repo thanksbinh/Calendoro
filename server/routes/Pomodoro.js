@@ -28,24 +28,32 @@ async function findListingByUserId(client, userId) {
     return results;
 }
 
-const uri = "mongodb+srv://binh191519:191519@cluster0.8cmz8la.mongodb.net/?retryWrites=true&w=majority";
-const client = new MongoClient(uri);
-
 router.get('/', async (req, res) => {
-    await client.connect();
-    const listOfReps = await findListingByUserId(client, 02);
-    res.json(listOfReps);
+    const uri = "mongodb+srv://binh191519:191519@cluster0.8cmz8la.mongodb.net/?retryWrites=true&w=majority";
+    const client = new MongoClient(uri);
+    try {
+        await client.connect();
+        const listOfReps = await findListingByUserId(client, 02);
+        res.json(listOfReps);
+    } catch(err) {
+        console.log(err);
+    } finally {
+        await client.close();
+    }
 })
 
 router.post('/', async (req, res) => {
-    await client.connect();
-    const postRep = await createListing(client, {  
-        "userId": 02,
-        "start": new Date(new Date().getTime() - 25*60000), 
-        "end": new Date(), 
-        "title": "Test create listing"
-    });
-    res.json(postRep);
+    const uri = "mongodb+srv://binh191519:191519@cluster0.8cmz8la.mongodb.net/?retryWrites=true&w=majority";
+    const client = new MongoClient(uri);
+    try {
+        await client.connect();
+        const postRep = await createListing(client, req.body);
+        res.json(postRep);
+    } catch(err) {
+        console.log(err);
+    } finally {
+        await client.close();
+    }
 })
 
 module.exports = router;

@@ -5,6 +5,7 @@ import toneSound from '../assets/sounds/tone.wav';
 import { Button } from "./Button";
 import { State } from "./State";
 import { Clock } from "./Clock";
+import axios from "axios";
 
 export function Pomodoro(props) {
     const [state, setState] = useState("");
@@ -14,8 +15,6 @@ export function Pomodoro(props) {
     const [play] = useSound(toneSound, {volume: 0.8});
 
     let bonusTime = 0;
-    let history = [];
-
     let timeRemains = getTimeRemains();
     let timeRemainsString = getTimeRemainsFormat(timeRemains);
 
@@ -45,16 +44,16 @@ export function Pomodoro(props) {
         document.title = newTitle;
     }
 
-    function updateHistory() {
-        let object = {  "UserId": "02",
-                        "Start": startTime, 
-                        "Durration": curTime - startTime, 
-                        "Task": getTask()
-                    }; 
-        // Post to backend
-        history.push(object);
+    async function updateHistory() {
+        if (curTime - startTime <= 5*60*1000) return;
 
-        console.log(object);
+        let object = {  "userId": 2,
+                        "start": startTime, 
+                        "end": curTime, 
+                        "title": getTask()
+                    }; 
+        await axios.post("http://localhost:3001/post", object);
+        console.log("sent", object);
     }
 
     function checkTask() {
@@ -146,7 +145,7 @@ export function Pomodoro(props) {
                         (focusCount+1 !== props.maxFocusCount ? 
                             <Button click={onShortBreak} value={"Short Break"}/> : 
                             <Button click={onLongBreak} value={"Long Break"}/>) :
-                        <Button click={onFocus} value={"Focus"}/>}
+                        <Button click={onFocus} value={"Focus"} addClass={"focus"}/>}
                     <Button click={onEnd} value={"End"}/>
                 </div>
             </div>

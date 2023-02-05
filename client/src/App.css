@@ -41,6 +41,10 @@ a {
     cursor: pointer;
 }
 
+.refresh-goal:hover {
+    cursor: pointer;
+}
+
 .btn-select {
     background-color: rgba(0, 0, 0, 0.2);
     border-radius: 50%;
