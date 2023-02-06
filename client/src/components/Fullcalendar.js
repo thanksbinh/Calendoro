@@ -21,8 +21,12 @@ export function Fullcalendar(props) {
                 eventSources={[
                     {googleCalendarId: 'adulii4v76p76cupo4ccdctvj0@group.calendar.google.com', color: 'rgba(255, 255, 255, 0.1)'},
                     {events: async function() {
-                        const res = await axios.get("http://localhost:3001/post");
-                        if (res) return res.data;
+                        try {
+                            const res = await axios.get("http://localhost:3001/post");
+                            return res.data;
+                        } catch (error) {
+                           console.log("Fullcalendar error", error); 
+                        }
                     }, color: 'rgba(0, 0, 0, 0.1)'}
                 ]}
                 nowIndicator={true}

@@ -41,13 +41,72 @@ a {
     cursor: pointer;
 }
 
+.today-remain {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1; /* number of lines to show */
+    -webkit-box-orient: vertical;
+}
+
 .refresh-goal:hover {
+    cursor: pointer;
+}
+
+.login-btn:hover {
     cursor: pointer;
 }
 
 .btn-select {
     background-color: rgba(0, 0, 0, 0.2);
     border-radius: 50%;
+}
+
+.profile-picture {
+    width: 24px;
+    position: relative;
+    top: -2.5px;
+}
+
+.profile-picture:hover {
+    cursor: pointer;
+}
+
+.legend-checkbox {
+    border-bottom: 1px solid gray;
+    font-size: 18px;
+    text-align: center;
+    padding: 5px;
+}
+
+.form-check {
+    height: 32px;
+    margin-left: 8px;
+}
+
+.form-check-input {
+    height: 18px;
+    width: 18px;
+    margin: 8px;
+}
+
+.form-check-label {
+    margin: 4px;
+}
+
+.popup-content {
+    margin: auto;
+    background: rgb(255, 255, 255);
+    width: 50%;
+    padding: 5px;
+    max-width: 400px;
+    max-height: 600px;
+    border-radius: 6px;
+    overflow: auto;
+}
+  
+.popup-overlay {
+    background: rgba(0, 0, 0, 0.4);
 }
 
 .fullcalendar {

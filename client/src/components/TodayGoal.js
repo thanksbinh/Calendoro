@@ -33,7 +33,7 @@ export function TodayGoal(props) {
     return (
         <div className='goal text-center'>
             <div className="d-flex"> 
-                Today's remaining: <span className="goalNum ps-1 pe-1">{todayGoal}</span> Reps
+                <span className="today-remain">Today's remaining:</span><span className="goalNum ps-1 pe-1">{todayGoal}</span> Reps
                 <span className="refresh-goal material-symbols-outlined ps-1" onClick={getTodayGoal}>refresh</span>
             </div>
         </div>

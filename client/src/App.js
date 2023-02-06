@@ -10,7 +10,7 @@ export function App() {
 
     function passState(state) {
         setState(state);
-    }
+    };
 
     return (
         <div className="container-fluid text-white">
