@@ -14,14 +14,19 @@ export function TodayGoal(props) {
         let events = calendarApi.getEvents();
         let timeSum = 0;
         for (let event of events) {
-            if (event._instance.range.start.toDateString() !== new Date().toDateString()) continue;
+            // Todo: Fix this
+            let eventStart = new Date(event._instance.range.start);
+            eventStart.setHours(eventStart.getHours() - 7);
+
+            if (eventStart.toDateString() !== new Date().toDateString()) continue;
+
             if (event._def.extendedProps.userId == null) {
                 timeSum += event._instance.range.end - event._instance.range.start;
             } else {
                 timeSum -= event._instance.range.end - event._instance.range.start;
             }
         }
-        setTodayGoal(Math.ceil(timeSum/(30*60*1000)));
+        setTodayGoal(Math.ceil(timeSum/(25*60*1000)));
     } 
 
     useEffect(() => {

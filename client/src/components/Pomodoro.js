@@ -13,8 +13,8 @@ export function Pomodoro(props) {
     const [startTime, setStartTime] = useState(new Date());
     const [focusCount, setFocusCount] = useState(0);
     const [play] = useSound(toneSound, {volume: 0.8});
+    const [bonusTime, setBonusTime] = useState(0);
 
-    let bonusTime = 0;
     let timeRemains = getTimeRemains();
     let timeRemainsString = getTimeRemainsFormat(timeRemains);
 
@@ -45,11 +45,12 @@ export function Pomodoro(props) {
     }
 
     async function updateHistory() {
+        if (state !== "Focus") return;
         if (curTime - startTime <= 5*60*1000) return;
 
         let object = {  "userId": 2,
-                        "start": startTime, 
-                        "end": curTime, 
+                        "start": startTime.toString(), 
+                        "end": curTime.toString(), 
                         "title": getTask()
                     }; 
         await axios.post("http://localhost:3001/post", object);
@@ -74,7 +75,7 @@ export function Pomodoro(props) {
     function onFocus() {
         if (!checkTask()) return;
 
-        bonusTime = getTimeRemains();
+        setBonusTime(getTimeRemains())
 
         setStartTime(curTime);
         setState("Focus");
@@ -84,7 +85,7 @@ export function Pomodoro(props) {
         updateHistory();
 
         setFocusCount(focusCount+1);
-        bonusTime = -getTimeRemains() / 5;
+        setBonusTime(-getTimeRemains() / 5);
 
         setStartTime(curTime);
         setState("Short Break");
@@ -94,7 +95,7 @@ export function Pomodoro(props) {
         updateHistory();
 
         setFocusCount(0);
-        bonusTime = -getTimeRemains() / 5;
+        setBonusTime(-getTimeRemains() / 5);
 
         setStartTime(curTime);
         setState("Long Break");

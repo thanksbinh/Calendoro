@@ -21,7 +21,7 @@ export function App() {
                 <Fullcalendar calendarRef={calendarRef}/>
             </div>
             <div className="d-flex justify-content-center">
-                <Pomodoro focusDur={25*60*1000} shortBreakDur={5*1000} longBreakDur={15*60*1000} maxFocusCount={4} passState={passState}/>
+                <Pomodoro focusDur={25*60*1000} shortBreakDur={5*60*1000} longBreakDur={15*60*1000} maxFocusCount={4} passState={passState}/>
             </div>
             <div className="d-flex justify-content-center">
                 <Task isDisabled={state === "Focus"}/>
