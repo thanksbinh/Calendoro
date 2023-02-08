@@ -46,11 +46,11 @@ export function Pomodoro(props) {
 
     async function updateHistory() {
         if (state !== "Focus") return;
-        if (curTime - startTime <= 5*60*1000) return;
+        // if (curTime - startTime <= 5*60*1000) return;
 
         let object = {  "userId": 2,
-                        "start": startTime.toString(), 
-                        "end": curTime.toString(), 
+                        "start": startTime, 
+                        "end": curTime, 
                         "title": getTask()
                     }; 
         await axios.post("http://localhost:3001/post", object);

@@ -3,11 +3,11 @@ import { googleLogout, useGoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
 import { CalendarSelect } from './CalendarSelect';
 
-export function Login() {
+export function Login(props) {
     const [ user, setUser ] = useState(null);
-    const [ profile, setProfile ] = useState([]);
+    const [ profile, setProfile ] = useState(null);
     const [ calendarList, setCalendarList] = useState([]);
-    const [ isCalendarSelect, setIsCalendarSelect] = useState(false);
+    const [ calendarSelectMode, setCalendarSelectMode] = useState(false);
 
     const login = useGoogleLogin({
         onSuccess: (codeResponse) => setUser(codeResponse),
@@ -15,34 +15,60 @@ export function Login() {
         scope: "https://www.googleapis.com/auth/calendar"
     });
 
-    useEffect(
-        () => {
-            if (user != null) {
-                console.log("user", user)
-
-                axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`, {
-                    headers: {
-                        Authorization: `Bearer ${user.access_token}`,
-                        Accept: 'application/json'
-                    }
-                }).then((res) => {
+    useEffect(() => {
+            if (user) {
+                async function updateProfile() {
+                    const res = await axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`, {
+                        headers: {
+                            Authorization: `Bearer ${user.access_token}`,
+                            Accept: 'application/json'
+                        }
+                    })
                     setProfile(res.data);
                     console.log(res.data);
-                }).catch((err) => console.log(err));
-
-                axios.get(`https://www.googleapis.com/calendar/v3/users/me/calendarList`, {
-                    headers: {
-                        'Authorization': `Bearer ${user.access_token}`
-                    }
-                }).then((res) => {
+                }
+            
+                async function updateCalendar() {
+                    const res = await axios.get(`https://www.googleapis.com/calendar/v3/users/me/calendarList`, {
+                        headers: {
+                            'Authorization': `Bearer ${user.access_token}`
+                        }
+                    });
                     res.data.items.sort((a, b) => a.summary.localeCompare(b.summary));
                     setCalendarList(res.data.items);
-                    setIsCalendarSelect(true);
-                })
+                    setCalendarSelectMode(true);
+                }
+
+                updateProfile();
+                updateCalendar();
             }
         },
         [ user ]
     );
+
+    // useEffect(() => {
+        // async function updateEvents() {
+        //     let eventList = [];
+
+        //     for (let selectedCalendar of selectedCalendarList) {
+        //         let start = new Date("2023-02-06").toISOString();
+        //         let end = new Date("2023-02-12").toISOString();
+        //         const res = await axios.get(`https://www.googleapis.com/calendar/v3/calendars/${selectedCalendar.id}/events?timeMin=${start}&timeMax=${end}`, {
+        //             headers: {
+        //                 Authorization: `Bearer ${user.access_token}`,
+        //                 Accept: 'application/json',
+        //             }
+        //         })
+        //         console.log(res.data.items);
+        //         eventList.push(res.data);
+        //     }
+
+        //     props.setEventList(eventList);
+        //     console.log("Select calendar success", eventList);
+        // }
+        
+        // if (user) updateEvents();
+    // }, [selectedCalendarList])
 
     // log out function to log the user out of google and set the profile array to null
     const logOut = () => {
@@ -59,7 +85,7 @@ export function Login() {
             ) : (
                 <span className="material-symbols-outlined p-2 login-btn" onClick={() => login()}>login</span>
             )}
-            <CalendarSelect calendarList={calendarList} open={isCalendarSelect} setOpen={setIsCalendarSelect}/>
+            <CalendarSelect calendarList={calendarList} open={calendarSelectMode} setOpen={setCalendarSelectMode} setCalendarIdList={props.setCalendarIdList}/>
         </div>
     );
 }

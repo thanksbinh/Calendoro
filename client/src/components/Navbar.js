@@ -28,7 +28,7 @@ export function Navbar(props) {
             <div className="tools flex-item d-flex justify-content-end align-items-center h-100">
                 <span className="material-symbols-outlined toggle-calendar-btn p-2" onClick={onToggleCalendar}>event</span>
                 <span className="material-symbols-outlined setting-btn p-2" onClick={onToggleSetting}>settings</span>
-                <Login />
+                <Login setCalendarIdList={props.setCalendarIdList}/>
             </div>
         </div>
     )

@@ -19,7 +19,7 @@ async function findListingByUserId(client, userId) {
             console.log(`${i + 1}. title: ${result.title}`);
             console.log(`   _id: ${result._id}`);
             console.log(`   end: ${result.end}`);
-            console.log(`   start: ${new Date(result.start).toDateString()}`);
+            console.log(`   start: ${result.start}`);
         });
     } else {
         console.log(`No listings found`);

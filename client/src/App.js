@@ -6,6 +6,7 @@ import { Task } from './components/Task';
 
 export function App() {
     const [state, setState] = useState('');
+    const [calendarIdList, setCalendarIdList] = useState([]);
     const calendarRef = React.createRef();
 
     function passState(state) {
@@ -15,10 +16,10 @@ export function App() {
     return (
         <div className="container-fluid text-white">
             <div className="d-flex justify-content-center">
-                <Navbar calendarRef={calendarRef}/>
+                <Navbar calendarRef={calendarRef} setCalendarIdList={setCalendarIdList}/>
             </div>
             <div className='fullcalendar'>
-                <Fullcalendar calendarRef={calendarRef}/>
+                <Fullcalendar calendarRef={calendarRef} calendarIdList={calendarIdList}/>
             </div>
             <div className="d-flex justify-content-center">
                 <Pomodoro focusDur={25*60*1000} shortBreakDur={5*60*1000} longBreakDur={15*60*1000} maxFocusCount={4} passState={passState}/>

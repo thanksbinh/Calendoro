@@ -33,7 +33,7 @@ export function TodayGoal(props) {
         setTimeout(() => {
             getTodayGoal();
         }, 2000)
-    }, []) // eslint-disable-line react-hooks/exhaustive-deps
+    }, [props]) // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
         <div className='goal text-center'>
