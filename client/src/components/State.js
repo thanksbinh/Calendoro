@@ -2,6 +2,7 @@ import React from "react";
 
 export const State = (props) => {
     let elements = []
+    
     for (let state of props.states) {
         if (state === props.active) 
             elements.push(<li className="list-group-item active" key={state}> {state} </li>)
