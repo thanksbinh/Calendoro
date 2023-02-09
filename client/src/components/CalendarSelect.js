@@ -8,11 +8,16 @@ export function CalendarSelect(props) {
     
     useEffect(() => {
         onSubmit();
-    }, []) // eslint-disable-line react-hooks/exhaustive-deps
+        console.log("update cal source")
+    }, [props]) // eslint-disable-line react-hooks/exhaustive-deps
 
     const onSubmit = () =>  {
+        let eventSource = props.calendarRef.current.getApi().getEventSources();
+        eventSource = eventSource.map(source => source.internalEventSource.meta.googleCalendarId);
+        console.log(eventSource);
+
         selectedCalendarIdList.forEach(id => {
-            if (id) props.calendarRef.current.getApi().addEventSource({
+            if (id && !eventSource.includes(id)) props.calendarRef.current.getApi().addEventSource({
                 googleCalendarId: id, 
                 color: 'rgba(255, 255, 255, 0.1)'
             });

@@ -12,7 +12,7 @@ export function Pomodoro(props) {
     const [curTime, setCurTime] = useState(new Date());
     const [startTime, setStartTime] = useState(new Date());
     const [focusCount, setFocusCount] = useState(0);
-    const [play] = useSound(toneSound, {volume: 0.8});
+    const [play] = useSound(toneSound, {volume: 0.6});
     const [bonusTime, setBonusTime] = useState(0);
 
     let timeRemains = getTimeRemains();
@@ -48,11 +48,12 @@ export function Pomodoro(props) {
         if (state !== "Focus") return;
         // if (curTime - startTime <= 5*60*1000) return;
 
-        let object = {  "userId": 2,
-                        "start": startTime, 
-                        "end": curTime, 
-                        "title": getTask()
-                    }; 
+        let object = {  
+            "userId": 2,
+            "start": startTime, 
+            "end": curTime, 
+            "title": getTask()
+        }; 
         await axios.post("http://localhost:3001/post", object);
         console.log("sent", object);
     }

@@ -25,7 +25,6 @@ export function Fullcalendar(props) {
                             return res.data;
                         } catch (error) {
                            console.log("Fullcalendar error", error);
-                           return {}; 
                         }
                     }, color: 'rgba(0, 0, 0, 0.1)'}
                 ]}
