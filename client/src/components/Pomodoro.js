@@ -2,9 +2,6 @@ import React, { useEffect, useState } from "react";
 import PropTypes from 'prop-types';
 import useSound from 'use-sound';
 import toneSound from '../assets/sounds/tone.wav';
-import { Button } from "./Button";
-import { State } from "./State";
-import { Clock } from "./Clock";
 import axios from "axios";
 
 export function Pomodoro(props) {
@@ -12,7 +9,7 @@ export function Pomodoro(props) {
     const [curTime, setCurTime] = useState(new Date());
     const [startTime, setStartTime] = useState(new Date());
     const [focusCount, setFocusCount] = useState(0);
-    const [play] = useSound(toneSound, {volume: 0.6});
+    const [play, {stop}] = useSound(toneSound, {volume: 0.6});
     const [bonusTime, setBonusTime] = useState(0);
 
     let timeRemains = getTimeRemains();
@@ -140,7 +137,7 @@ export function Pomodoro(props) {
     return (
         <div className="pomodoro">
             <div className="h-100 d-flex flex-column justify-content-around align-items-center">
-                <State states={["Focus", "Short Break", "Long Break"]} active={state}></State>
+                <State active={state}></State>
                 <Clock value={timeRemainsString}></Clock>
                 <div className="d-flex gap-2">
                     {state === "Focus" ? 
@@ -160,4 +157,35 @@ Pomodoro.protoType = {
     shortBreakDur: PropTypes.number.isRequired,
     longBreakDur: PropTypes.number.isRequired,
     maxFocusCount: PropTypes.number.isRequired,
+}
+
+const State = (props) => {
+    let elements = []
+    
+    for (let state of ["Focus", "Short Break", "Long Break"]) {
+        if (state === props.active) 
+            elements.push(<li className="list-group-item active" key={state}> {state} </li>)
+        else 
+            elements.push(<li className="list-group-item" key={state}> {state} </li>)
+    }
+
+    return (
+        <ul className="list-group list-group-horizontal">
+            {elements.map((el) => el)}
+        </ul>
+    )
+}
+
+const Clock = (props) => {
+    return (
+        <div className="time-remains display-1"> {props.value} </div>
+    )
+}
+
+const Button = (props) => {
+    const classList = "main-btn btn btn-light btn-lg px-5" + (props.addClass ? " " + props.addClass : "");
+    
+    return (
+        <button className={classList} onClick={props.click}> {props.value} </button>
+    )
 }

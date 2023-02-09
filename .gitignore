@@ -23,4 +23,7 @@ node_modules/
 /**yarn-debug.log*
 /**yarn-error.log*
 
+# dotenv environment variables file
+.env
+.env.test
 key.js

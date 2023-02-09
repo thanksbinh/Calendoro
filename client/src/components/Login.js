@@ -9,12 +9,43 @@ export function Login(props) {
     const [ profile, setProfile ] = useState(getCookie("profile") ? JSON.parse(getCookie("profile")) : null);
     const [ calendarList, setCalendarList] = useState([]);
     const [ calendarSelectMode, setCalendarSelectMode] = useState(false);
+    const [selectedCalendarIdList, selectCalendarIdList] = useState(getCookie("selectedCalendarId") ? getCookie("selectedCalendarId").split(",") : []);
 
     const login = useGoogleLogin({
         onSuccess: (codeResponse) => setUser(codeResponse),
         onError: (error) => console.log('Login Failed:', error),
         scope: "https://www.googleapis.com/auth/calendar"
     });
+
+    const removeEventSources = () =>  {
+        let eventSource = props.calendarRef.current.getApi().getEventSources();
+        console.log(eventSource);
+        eventSource = eventSource.map(source => source.internalEventSource.meta.googleCalendarId);
+
+        selectedCalendarIdList.forEach(id => {
+            if (id && eventSource.includes(id)) props.calendarRef.current.getApi().getEventSourceById(id).remove();
+        })
+        setCookie("selectedCalendarId", "");
+    }
+
+    useEffect(() => {
+        const addEventSources = () =>  {
+            let eventSource = props.calendarRef.current.getApi().getEventSources();
+            console.log(eventSource);
+            eventSource = eventSource.map(source => source.internalEventSource.meta.googleCalendarId);
+    
+            selectedCalendarIdList.forEach(id => {
+                if (id && !eventSource.includes(id)) props.calendarRef.current.getApi().addEventSource({
+                    googleCalendarId: id, 
+                    color: 'rgba(255, 255, 255, 0.1)',
+                    id: id
+                });
+            })
+            setCookie("selectedCalendarId", selectedCalendarIdList, 30);
+        }
+
+        addEventSources();
+    }, [props.calendarRef, selectedCalendarIdList])
 
     useEffect(() => {
         // New login section, no user in cookie
@@ -40,6 +71,7 @@ export function Login(props) {
                     }
                 });
                 res.data.items.sort((a, b) => a.summary.localeCompare(b.summary));
+                console.log(res.data.items)
                 setCalendarList(res.data.items);
                 setCalendarSelectMode(true);
             }
@@ -80,7 +112,8 @@ export function Login(props) {
         setCookie("profile", "");
         setCookie("user", "");
         setCookie("selectedCalendarId", "");
-        // Todo: wipe data fullcalendar and goal
+        removeEventSources();
+        selectCalendarIdList([]);
     };
 
     return (
@@ -92,7 +125,7 @@ export function Login(props) {
             ) : (
                 <span className="material-symbols-outlined p-2 login-btn" onClick={() => login()}>login</span>
             )}
-            <CalendarSelect calendarList={calendarList} open={calendarSelectMode} setOpen={setCalendarSelectMode} calendarRef={props.calendarRef}/>
+            <CalendarSelect calendarList={calendarList} open={calendarSelectMode} setOpen={setCalendarSelectMode} calendarRef={props.calendarRef} selectCalendarIdList={selectCalendarIdList}/>
         </div>
     );
 }

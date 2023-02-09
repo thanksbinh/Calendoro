@@ -1,4 +1,4 @@
-import React, {  useState } from 'react';
+import React, {  useEffect, useState } from 'react';
 import { Navbar } from './components/Navbar';
 import { Pomodoro } from './components/Pomodoro';
 import { Fullcalendar } from './components/Fullcalendar';
@@ -7,6 +7,10 @@ import { Task } from './components/Task';
 export function App() {
     const [state, setState] = useState('');
     const calendarRef = React.createRef();
+
+    useEffect(() => {
+        console.log("calendarRef changed")
+    }, [calendarRef])
 
     function passState(state) {
         setState(state);
