@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import axios from "axios";
 import FullCalendar from '@fullcalendar/react';
 import timeGridPlugin from '@fullcalendar/timegrid';
@@ -6,16 +6,6 @@ import googleCalendarPlugin from '@fullcalendar/google-calendar';
 
 export function Fullcalendar(props) {
     const scrollTime = (new Date().getHours() - 2).toString().padStart(2, '0') + ":00:00";
-
-    useEffect(() => {
-        props.calendarIdList.forEach(id => {
-            console.log(id)
-            props.calendarRef.current.getApi().addEventSource({
-                googleCalendarId: id, 
-                color: 'rgba(255, 255, 255, 0.1)'
-            });
-        })
-    }, [props])
     
     function refresh() {
         props.calendarRef.current.getApi().refetchEvents();

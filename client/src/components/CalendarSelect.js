@@ -1,17 +1,31 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
+import { setCookie, getCookie } from './Cookie';
 
 export function CalendarSelect(props) {
-    const [selectedCalendarIdList, selectCalendarIdList] = useState([]);
+    const [selectedCalendarIdList, selectCalendarIdList] = useState(getCookie("selectedCalendarId") ? getCookie("selectedCalendarId").split(",") : []);
+    
+    useEffect(() => {
+        onSubmit();
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-    function onSubmit() {
-        props.setCalendarIdList(selectedCalendarIdList);
+    const onSubmit = () =>  {
+        selectedCalendarIdList.forEach(id => {
+            if (id) props.calendarRef.current.getApi().addEventSource({
+                googleCalendarId: id, 
+                color: 'rgba(255, 255, 255, 0.1)'
+            });
+        })
+        setCookie("selectedCalendarId", selectedCalendarIdList, 30);
     }
 
     const handleOnChange = (i) => {
-        console.log("add", props.calendarList[i].summary, props.calendarList[i].id);
-        selectCalendarIdList([...selectedCalendarIdList, props.calendarList[i].id]);
+        if (selectedCalendarIdList.includes(props.calendarList[i].id)) {
+            selectCalendarIdList(selectedCalendarIdList.filter(item => item !== props.calendarList[i].id))
+        } else {
+            selectCalendarIdList([...selectedCalendarIdList, props.calendarList[i].id]);
+        }
     }
 
     return (
@@ -30,6 +44,6 @@ export function CalendarSelect(props) {
                 })}
             </div>
             <button className="btn btn-primary" onClick={() => {props.setOpen(false); onSubmit();}}>Submit</button>
-        </Popup>
+        </Popup> 
     )
 } 

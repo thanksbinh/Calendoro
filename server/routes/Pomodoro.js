@@ -1,3 +1,4 @@
+const key = require("../key/key");
 const express = require("express");
 const {MongoClient} = require("mongodb");
 const router = express.Router();
@@ -29,7 +30,7 @@ async function findListingByUserId(client, userId) {
 }
 
 router.get('/', async (req, res) => {
-    const uri = "mongodb+srv://binh191519:191519@cluster0.8cmz8la.mongodb.net/?retryWrites=true&w=majority";
+    const uri = key.mongoURI;
     const client = new MongoClient(uri);
     try {
         await client.connect();
@@ -43,7 +44,7 @@ router.get('/', async (req, res) => {
 })
 
 router.post('/', async (req, res) => {
-    const uri = "mongodb+srv://binh191519:191519@cluster0.8cmz8la.mongodb.net/?retryWrites=true&w=majority";
+    const uri = key.mongoURI;
     const client = new MongoClient(uri);
     try {
         await client.connect();
