@@ -1,7 +1,7 @@
-const key = require("../key/key");
 const express = require("express");
 const {MongoClient} = require("mongodb");
 const router = express.Router();
+require('dotenv').config();
 
 async function createListing(client, newListing){
     const result = await client.db("myCollection").collection("pomodoro").insertOne(newListing);
@@ -30,11 +30,11 @@ async function findListingByUserId(client, userId) {
 }
 
 router.get('/', async (req, res) => {
-    const uri = key.mongoURI;
+    const uri = process.env.MONGO_URI;
     const client = new MongoClient(uri);
     try {
         await client.connect();
-        const listOfReps = await findListingByUserId(client, 02);
+        const listOfReps = await findListingByUserId(client, req.query.userId);
         res.json(listOfReps);
     } catch(err) {
         console.log(err);
@@ -44,7 +44,7 @@ router.get('/', async (req, res) => {
 })
 
 router.post('/', async (req, res) => {
-    const uri = key.mongoURI;
+    const uri = process.env.MONGO_URI;
     const client = new MongoClient(uri);
     try {
         await client.connect();

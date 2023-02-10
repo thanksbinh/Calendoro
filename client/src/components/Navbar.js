@@ -1,15 +1,12 @@
 import React from "react";
 import { TodayGoal } from "./TodayGoal";
 import { Login } from "./Login";
+import { Setting } from "./Setting";
 
 export function Navbar(props) {
     function onToggleCalendar() {
         document.querySelector('.fullcalendar').classList.toggle('show');
         document.querySelector('.toggle-calendar-btn').classList.toggle('btn-select');
-    }
-
-    function onToggleSetting() {
-        
     }
 
     return (
@@ -27,7 +24,7 @@ export function Navbar(props) {
             
             <div className="tools flex-item d-flex justify-content-end align-items-center h-100">
                 <span className="material-symbols-outlined toggle-calendar-btn p-2" onClick={onToggleCalendar}>event</span>
-                <span className="material-symbols-outlined setting-btn p-2" onClick={onToggleSetting}>settings</span>
+                <Setting setSetting={props.setSetting}/>
                 <Login calendarRef={props.calendarRef}/>
             </div>
         </div>

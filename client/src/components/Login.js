@@ -42,6 +42,7 @@ export function Login(props) {
                 });
             })
             setCookie("selectedCalendarId", selectedCalendarIdList, 30);
+            // Todo: User data
         }
 
         addEventSources();
@@ -120,7 +121,7 @@ export function Login(props) {
         <div>
             {profile ? (
                 <div className='p-2'>
-                    <img src={profile.picture} alt="user profile" onClick={logOut} className="profile-picture"/>
+                    <img src={profile.picture} alt="user profile" onClick={logOut} className="profile-picture rounded"/>
                 </div>
             ) : (
                 <span className="material-symbols-outlined p-2 login-btn" onClick={() => login()}>login</span>

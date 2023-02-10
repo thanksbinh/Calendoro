@@ -3,13 +3,14 @@ import PropTypes from 'prop-types';
 import useSound from 'use-sound';
 import toneSound from '../assets/sounds/tone.wav';
 import axios from "axios";
+import { getCookie } from "./Cookie";
 
 export function Pomodoro(props) {
     const [state, setState] = useState("");
     const [curTime, setCurTime] = useState(new Date());
     const [startTime, setStartTime] = useState(new Date());
     const [focusCount, setFocusCount] = useState(0);
-    const [play, {stop}] = useSound(toneSound, {volume: 0.6});
+    const [play] = useSound(toneSound, {volume: 0.6});
     const [bonusTime, setBonusTime] = useState(0);
 
     let timeRemains = getTimeRemains();
@@ -46,7 +47,7 @@ export function Pomodoro(props) {
         // if (curTime - startTime <= 5*60*1000) return;
 
         let object = {  
-            "userId": 2,
+            "userId": JSON.parse(getCookie("profile") || "{}").id,
             "start": startTime, 
             "end": curTime, 
             "title": getTask()
@@ -110,13 +111,13 @@ export function Pomodoro(props) {
     function getTimeRemains() {
         switch (state) {
             case "Focus":
-                return props.focusDur - (curTime - startTime);
+                return props.setting.focusDur - (curTime - startTime);
             case "Short Break":
-                return props.shortBreakDur - (curTime - startTime) + bonusTime;
+                return props.setting.shortBreakDur - (curTime - startTime) + (bonusTime > 0 ? bonusTime : 0);
             case "Long Break":
-                return props.longBreakDur - (curTime - startTime) + bonusTime;
+                return props.setting.longBreakDur - (curTime - startTime);
             default:
-                return props.focusDur;
+                return props.setting.focusDur;
         };
     }
 
@@ -141,7 +142,7 @@ export function Pomodoro(props) {
                 <Clock value={timeRemainsString}></Clock>
                 <div className="d-flex gap-2">
                     {state === "Focus" ? 
-                        (focusCount+1 !== props.maxFocusCount ? 
+                        (focusCount+1 !== props.setting.maxFocusCount ? 
                             <Button click={onShortBreak} value={"Short Break"}/> : 
                             <Button click={onLongBreak} value={"Long Break"}/>) :
                         <Button click={onFocus} value={"Focus"} addClass={"focus"}/>}

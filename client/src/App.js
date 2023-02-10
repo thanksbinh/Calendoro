@@ -6,6 +6,12 @@ import { Task } from './components/Task';
 
 export function App() {
     const [state, setState] = useState('');
+    const [setting, setSetting] = useState({
+        focusDur: 25*60*1000, 
+        shortBreakDur: 5*60*1000,
+        longBreakDur: 15*60*1000,
+        maxFocusCount: 4,
+    });
     const calendarRef = React.createRef();
 
     useEffect(() => {
@@ -19,13 +25,13 @@ export function App() {
     return (
         <div className="container-fluid text-white">
             <div className="d-flex justify-content-center">
-                <Navbar calendarRef={calendarRef}/>
+                <Navbar calendarRef={calendarRef} setSetting={setSetting}/>
             </div>
             <div className='fullcalendar'>
                 <Fullcalendar calendarRef={calendarRef}/>
             </div>
             <div className="d-flex justify-content-center">
-                <Pomodoro focusDur={25*60*1000} shortBreakDur={5*60*1000} longBreakDur={15*60*1000} maxFocusCount={4} passState={passState}/>
+                <Pomodoro setting={setting} passState={passState}/>
             </div>
             <div className="d-flex justify-content-center">
                 <Task isDisabled={state === "Focus"}/>
