@@ -1,23 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
-import { setCookie, getCookie } from './Cookie';
 
 export function CalendarSelect(props) {
-    const [selectedCalendarIdList, selectCalendarIdList] = useState(getCookie("selectedCalendarId") ? getCookie("selectedCalendarId").split(",") : []);
-    
-    useEffect(() => {
-        onSubmit();
-    }, []) // eslint-disable-line react-hooks/exhaustive-deps
+    const [selectedCalendarIdList, selectCalendarIdList] = useState([]);
 
-    const onSubmit = () =>  {
-        selectedCalendarIdList.forEach(id => {
-            if (id) props.calendarRef.current.getApi().addEventSource({
-                googleCalendarId: id, 
-                color: 'rgba(255, 255, 255, 0.1)'
-            });
-        })
-        setCookie("selectedCalendarId", selectedCalendarIdList, 30);
+    const onSubmit = () => {
+        props.selectCalendarIdList(selectedCalendarIdList);
+        selectCalendarIdList([]);
     }
 
     const handleOnChange = (i) => {
