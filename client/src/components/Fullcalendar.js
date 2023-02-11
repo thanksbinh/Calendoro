@@ -17,7 +17,7 @@ export function Fullcalendar(props) {
                 plugins={[ timeGridPlugin, googleCalendarPlugin ]}
                 ref={props.calendarRef}
                 initialView="timeGridWeek"
-                googleCalendarApiKey={key.googleCalendarApiKey}
+                googleCalendarApiKey={key.googleCalendarApiKey} 
                 nowIndicator={true}
                 allDaySlot={false}
                 scrollTime={scrollTime}
