@@ -37,33 +37,21 @@ export function Login(props) {
         })
     }
 
-    // When selectedCalendarIdList change, add event sources if not already added
-    useEffect(() => {
-        const addEventSources = () => {
-            if (!props.calendarRef.current) {
-                console.log('too fast');
-                return;
-            }
-            let eventSource = props.calendarRef.current.getApi().getEventSources();
-            eventSource = eventSource.map(source => source.internalEventSource.meta.googleCalendarId);
-
-            selectedCalendarIdList.forEach(id => {
-                if (id && !eventSource.includes(id)) props.calendarRef.current.getApi().addEventSource({
-                    googleCalendarId: id,
-                    color: 'rgba(153,187,225,1)',
-                    id: id
-                });
-            })
-            setCookie("selectedCalendarId", selectedCalendarIdList, 30);
-        }
-
-        addEventSources();
-    }, [props.calendarRef, selectedCalendarIdList])
-
-    // When new login section, no user in cookie, update profile, select user's calendar
+    // When new login section, no user in cookie, update profile, select user's calendar, 
+    // add user to database if not existed
     useEffect(() => {
         if (user && !getCookie("user")) {
             setCookie("user", JSON.stringify(user));
+
+            async function newUser(thisProfile) {
+                let object = {
+                    "userId": thisProfile.id,
+                    "email": thisProfile.email,
+                    "name": thisProfile.name,
+                };
+                await axios.post("http://localhost:3001/login", object);
+                console.log("sent", object);
+            }
 
             async function updateProfile() {
                 const res = await axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`, {
@@ -74,6 +62,16 @@ export function Login(props) {
                 })
                 setProfile(res.data);
                 setCookie("profile", JSON.stringify(res.data));
+                
+                const userExist = await axios.get("http://localhost:3001/login", {
+                    params: {
+                        userId: res.data.id 
+                    }
+                });
+                if (!userExist.data) await newUser(res.data);
+                else {
+                    console.log("user exist");
+                }
             }
 
             async function updateCalendar() {
@@ -93,21 +91,34 @@ export function Login(props) {
         }
     }, [user]);
 
+    // When selectedCalendarIdList change, add event sources if not already added
+    useEffect(() => {
+        const addEventSources = () => {
+            let eventSource = props.calendarRef.current.getApi().getEventSources();
+            eventSource = eventSource.map(source => source.internalEventSource.meta.googleCalendarId);
+
+            selectedCalendarIdList.forEach(id => {
+                if (id && !eventSource.includes(id)) props.calendarRef.current.getApi().addEventSource({
+                    googleCalendarId: id,
+                    color: 'rgba(153,187,225,1)',
+                    id: id
+                });
+            })
+            setCookie("selectedCalendarId", selectedCalendarIdList, 30);
+        }
+
+        addEventSources();
+    }, [props.calendarRef, selectedCalendarIdList])
+
     // Update user history event if profile != null 
     useEffect(() => {
         async function addUserHistory() {
             if (profile) props.calendarRef.current.getApi().addEventSource({
                 events: async function() {
-                    try {
-                        const res = await axios.get("http://localhost:3001/post", { 
-                            params: {
-                                userId: profile.id 
-                            }
-                        });
-                        return res.data;
-                    } catch (error) {
-                        console.log("addUserHistory error", error);
-                    }
+                    const res = await axios.get("http://localhost:3001/post", { 
+                        params: {userId: profile.id}
+                    });
+                    return res.data;
                 }, 
                 color: 'rgb(225, 155, 153)',
                 id: profile.id
@@ -116,31 +127,6 @@ export function Login(props) {
 
         addUserHistory();
     }, [profile]); // eslint-disable-line react-hooks/exhaustive-deps
-
-    // Get event from google calendar manually
-    // useEffect(() => {
-    // async function updateEvents() {
-    //     let eventList = [];
-
-    //     for (let selectedCalendar of selectedCalendarList) {
-    //         let start = new Date("2023-02-06").toISOString();
-    //         let end = new Date("2023-02-12").toISOString();
-    //         const res = await axios.get(`https://www.googleapis.com/calendar/v3/calendars/${selectedCalendar.id}/events?timeMin=${start}&timeMax=${end}`, {
-    //             headers: {
-    //                 Authorization: `Bearer ${user.access_token}`,
-    //                 Accept: 'application/json',
-    //             }
-    //         })
-    //         console.log(res.data.items);
-    //         eventList.push(res.data);
-    //     }
-
-    //     props.setEventList(eventList);
-    //     console.log("Select calendar success", eventList);
-    // }
-
-    // if (user) updateEvents();
-    // }, [selectedCalendarList])
 
     return (
         <div>

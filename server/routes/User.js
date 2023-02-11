@@ -1,0 +1,59 @@
+const express = require("express");
+const {MongoClient} = require("mongodb");
+const router = express.Router();
+require('dotenv').config();
+
+async function createListing(client, newListing){
+    const result = await client.db("myCollection").collection("user").insertOne(newListing);
+    console.log(`New listing created with the following id: ${result.insertedId}`);
+}
+
+async function findListingByUserId(client, userId) {
+    const cursor = await client.db("myCollection").collection("user").find({ "userId": userId });
+
+    const results = await cursor.toArray();
+
+    if (results.length > 0) {
+        console.log(`Found listing(s):`);
+        results.forEach((result, i) => {
+            console.log();
+            console.log(`${i + 1}. userId: ${result.userId}`);
+            console.log(`   email: ${result.email}`);
+            console.log(`   name: ${result.name}`);
+        });
+    } else {
+        console.log(`No listings found`);
+    }
+
+    return results;
+}
+
+router.get('/', async (req, res) => {
+    const uri = process.env.MONGO_URI;
+    const client = new MongoClient(uri);
+    try {
+        await client.connect();
+        const listing = await findListingByUserId(client, req.query.userId);
+        res.json(listing.length > 0);
+    } catch(err) {
+        console.log(err);
+    } finally {
+        await client.close();
+    }
+})
+
+router.post('/', async (req, res) => {
+    const uri = process.env.MONGO_URI;
+    const client = new MongoClient(uri);
+    try {
+        await client.connect();
+        const postRep = await createListing(client, req.body);
+        res.json(postRep);
+    } catch(err) {
+        console.log(err);
+    } finally {
+        await client.close();
+    }
+})
+
+module.exports = router;
