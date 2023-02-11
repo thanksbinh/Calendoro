@@ -77,7 +77,7 @@ There are many great Pomodoro timer software available online; however, I didn't
 
 Unique features:
 - Timer after reaching 0 will keep counting as long as user wanted, bonus work will be recorded. This will allow users to keep the work flow or get the job done without having to start the next focus section.
-- User can connect to Google Calendar to set today's goal base on the total events' duration. This way, users can be more flexible with their time while still getting the goal completed. Or they can have a reality check :).
+- User can login and connect to Google Calendar to set today's goal base on the total events' duration. This way, users can be more flexible with their time while still getting the goal completed. Or they can have a reality check :).
 
 I still have a few more ideas but let just end here for now. 
 
