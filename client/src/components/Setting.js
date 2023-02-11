@@ -11,53 +11,55 @@ export function Setting(props) {
         maxFocusCount: 4,
     });
     const closeModal = () => setSettingMode(false);
+    const modal = true;
+    const contentStyle = {};
 
-    function handleSetFocusDur() {
+    function handleSetFocusDur(event) {
         setSetting({
             ...setting,
-            focusDur: parseInt(document.getElementById("focusDurSet").value) * 60 * 1000
+            focusDur: event.target.value * 60 * 1000
         })
     }
 
-    function handleSetShortBreakDur() {
+    function handleSetShortBreakDur(event) {
         setSetting({
             ...setting,
-            shortBreakDur: parseInt(document.getElementById("shortBreakDurSet").value) * 60 * 1000
+            shortBreakDur: event.target.value * 60 * 1000
         })
     }
 
-    function handleSetLongBreakDur() {
+    function handleSetLongBreakDur(event) {
         setSetting({
             ...setting,
-            longBreakDur: parseInt(document.getElementById("longBreakDur").value) * 60 * 1000
+            longBreakDur: event.target.value * 60 * 1000
         })
     }
 
-    function handleSetMaxFocusCountSet() {
+    function handleSetMaxFocusCountSet(event) {
         setSetting({
             ...setting,
-            maxFocusCountSet: parseInt(document.getElementById("maxFocusCountSet").value)
+            maxFocusCountSet: event.target.value
         })
     }
 
     return (
         <div>
-            <span className="material-symbols-outlined setting-btn p-2" onClick={() => setSettingMode(!settingMode)}>settings</span>
-            <Popup open={settingMode} onClose={closeModal} modal>
+            <span className={"material-symbols-outlined setting-btn p-2" + (settingMode ? " btn-select" : "")} onClick={() => setSettingMode(!settingMode)}>settings</span>
+            <Popup open={settingMode} onClose={closeModal}  {...{ modal, contentStyle }}>
                 <legend className="legend-setting"> Setting </legend>
                 <form>
-                    <div className="form-row">
+                    <div className="form-row d-flex">
                         <div className="col">
-                            <input type="number" className="form-control" placeholder="Focus Duration (min)"  id="focusDurSet" onChange={handleSetFocusDur}/>
+                            <input type="number" className="form-control" placeholder="Focus Duration (min)" id="focusDurSet" onChange={handleSetFocusDur} />
                         </div>
                         <div className="col">
-                            <input type="number" className="form-control" placeholder="Short Break Duration (min)" id="shortBreakDurSet" onChange={handleSetShortBreakDur}/>
+                            <input type="number" className="form-control" placeholder="Short Break Duration (min)" id="shortBreakDurSet" onChange={handleSetShortBreakDur} />
                         </div>
                         <div className="col">
-                            <input type="number" className="form-control" placeholder="Long Break Duration (min)" id="longBreakDurSet" onChange={handleSetLongBreakDur}/>
+                            <input type="number" className="form-control" placeholder="Long Break Duration (min)" id="longBreakDurSet" onChange={handleSetLongBreakDur} />
                         </div>
                         <div className="col">
-                            <input type="number" className="form-control" placeholder="Max Sequential Focus Number" id="maxFocusCountSet" onChange={handleSetMaxFocusCountSet}/>
+                            <input type="number" className="form-control" placeholder="Long Break interval" id="maxFocusCountSet" onChange={handleSetMaxFocusCountSet} />
                         </div>
                     </div>
                 </form>

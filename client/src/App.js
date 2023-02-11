@@ -1,15 +1,16 @@
-import React, {  useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Navbar } from './components/Navbar';
 import { Pomodoro } from './components/Pomodoro';
 import { Fullcalendar } from './components/Fullcalendar';
 import { Task } from './components/Task';
+import { TodayGoal } from './components/TodayGoal';
 
 export function App() {
     const [state, setState] = useState('');
     const [setting, setSetting] = useState({
-        focusDur: 25*60*1000, 
-        shortBreakDur: 5*60*1000,
-        longBreakDur: 15*60*1000,
+        focusDur: 25 * 60 * 1000,
+        shortBreakDur: 5 * 60 * 1000,
+        longBreakDur: 15 * 60 * 1000,
         maxFocusCount: 4,
     });
     const calendarRef = React.createRef();
@@ -25,16 +26,19 @@ export function App() {
     return (
         <div className="container-fluid text-white">
             <div className="d-flex justify-content-center">
-                <Navbar calendarRef={calendarRef} setSetting={setSetting}/>
-            </div>
-            <div className='fullcalendar'>
-                <Fullcalendar calendarRef={calendarRef}/>
+                <Navbar calendarRef={calendarRef} setSetting={setSetting} />
             </div>
             <div className="d-flex justify-content-center">
-                <Pomodoro setting={setting} passState={passState}/>
+                <TodayGoal calendarRef={calendarRef}/>
             </div>
             <div className="d-flex justify-content-center">
-                <Task isDisabled={state === "Focus"}/>
+                <Fullcalendar calendarRef={calendarRef} />
+            </div>
+            <div className="d-flex justify-content-center">
+                <Pomodoro setting={setting} passState={passState} />
+            </div>
+            <div className="d-flex justify-content-center">
+                <Task isDisabled={state === "Focus"} />
             </div>
         </div>
     )
