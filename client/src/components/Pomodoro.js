@@ -42,12 +42,14 @@ export function Pomodoro(props) {
         document.title = newTitle;
     }
 
+    // Sent nothing if not logged in
     async function updateHistory() {
         if (state !== "Focus") return;
-        // if (curTime - startTime <= 5*60*1000) return;
+        if (curTime - startTime <= 5*60*1000) return;
 
+        if (!getCookie("profile")) return;
         let object = {
-            "userId": JSON.parse(getCookie("profile") || "{}").id,
+            "userId": JSON.parse(getCookie("profile")).id,
             "start": startTime,
             "end": curTime,
             "title": getTask()
