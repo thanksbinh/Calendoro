@@ -100,7 +100,7 @@ export function Login(props) {
             selectedCalendarIdList.forEach(id => {
                 if (id && !eventSource.includes(id)) props.calendarRef.current.getApi().addEventSource({
                     googleCalendarId: id,
-                    color: 'rgba(153,187,225,1)',
+                    color: 'rgba(29,117,183,0.5)',
                     id: id
                 });
             })
@@ -120,7 +120,7 @@ export function Login(props) {
                     });
                     return res.data;
                 }, 
-                color: 'rgb(225, 155, 153)',
+                color: 'rgba(240,178,188,1)',
                 id: profile.id
             });
         }

@@ -23,8 +23,16 @@ export function Pomodoro(props) {
     }, [])
 
     useEffect(() => {
+        switch (state) {
+            case "Focus":
+            case "":
+                document.querySelector(':root').style.setProperty('--color-main', 'rgba(191,53,51,1)');
+                break;
+            default:
+                document.querySelector(':root').style.setProperty('--color-main', 'rgba(29,117,183,1)');
+        };
         props.passState(state);
-    }, [props, state])
+    }, [state]) // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
         changeTitle(timeRemainsString + " - " + getTask());

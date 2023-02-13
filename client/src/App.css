@@ -1,6 +1,8 @@
 :root {
-    --color-red: rgb(186, 73, 73);
-    --color-pink: rgb(225, 155, 153);
+    --color-main: rgba(191,53,51,1);
+    --color-pink: rgba(240,178,188,1);
+    --color-blue: rgba(29,117,183,1);
+    --color-green: rgb(139,199,195);
 }
 
 a {
@@ -9,7 +11,7 @@ a {
 }
 
 .container-fluid {
-    background-color: var(--color-red);
+    background-color: var(--color-main);
     min-height: 1000px;
 }
 
@@ -139,8 +141,8 @@ a {
 }
 
 .list-group-item.active {
-    background-color: var(--color-red);
-    border-color: var(--color-red);
+    background-color: transparent;
+    border-color: transparent;
 }
 
 .time-remains {
@@ -149,16 +151,12 @@ a {
 }
 
 .main-btn {
-    color: var(--color-red);
+    color: var(--color-main);
     display: block;
 }
 
 .main-btn:hover {
-    color: var(--color-red);
-}
-
-.main-btn:hover {
-    color: var(--color-red);
+    color: var(--color-main);
 }
 
 @keyframes shaker {
