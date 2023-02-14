@@ -163,13 +163,6 @@ export function Pomodoro(props) {
     )
 }
 
-Pomodoro.protoType = {
-    focusDur: PropTypes.number.isRequired,
-    shortBreakDur: PropTypes.number.isRequired,
-    longBreakDur: PropTypes.number.isRequired,
-    maxFocusCount: PropTypes.number.isRequired,
-}
-
 const State = (props) => {
     let elements = []
 

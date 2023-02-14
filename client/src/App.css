@@ -125,12 +125,15 @@ a {
     border-color: var(--color-pink) !important;
 }
 
+.main-content {
+    margin: 40px 0;
+}
+
 .pomodoro {
     background-color: rgba(255, 255, 255, 0.1);
     height: 302px;
     width: 480px;
     padding: 20px 0;
-    margin: 40px 0 ;
     border-radius: 6px;
 }
 
