@@ -1,8 +1,12 @@
 :root {
-    --color-main: rgba(191,53,51,1);
-    --color-pink: rgba(240,178,188,1);
-    --color-blue: rgba(29,117,183,1);
-    --color-green: rgb(139,199,195);
+    --color-main: #FF1D43;
+    --color-pink: rgba(240, 178, 188, 1);
+    --color-blue: #2078FE;
+    --color-green: rgb(139, 199, 195);
+}
+
+body {
+    background-color: var(--color-main);
 }
 
 a {
@@ -10,9 +14,20 @@ a {
     color: white;
 }
 
-.container-fluid {
-    background-color: var(--color-main);
+.background-container {
     min-height: 1000px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.background-image {
+    background-image: url('../public/background.jpg');
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
 }
 
 .navbar {
@@ -44,7 +59,8 @@ a {
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
-    -webkit-line-clamp: 1; /* number of lines to show */
+    -webkit-line-clamp: 1;
+    /* number of lines to show */
     -webkit-box-orient: vertical;
 }
 
@@ -103,7 +119,7 @@ a {
     border-radius: 6px;
     overflow: auto;
 }
-  
+
 .fullcalendar {
     background-color: rgb(255, 255, 255);
     color: rgb(87, 87, 87);
@@ -125,12 +141,15 @@ a {
     border-color: var(--color-pink) !important;
 }
 
+.main-content {
+    margin: 40px 0;
+}
+
 .pomodoro {
     background-color: rgba(255, 255, 255, 0.1);
     height: 302px;
     width: 480px;
     padding: 20px 0;
-    margin: 40px 0 ;
     border-radius: 6px;
 }
 
@@ -141,7 +160,7 @@ a {
 }
 
 .list-group-item.active {
-    background-color: transparent;
+    background-color: var(--color-main);
     border-color: transparent;
 }
 
@@ -160,16 +179,24 @@ a {
 }
 
 @keyframes shaker {
-	0% { -webkit-transform: translate(2px, 0); }
-	50% { -webkit-transform: translate(-2px, 0); }
-	100% { -webkit-transform: translate(2px, 0); }
+    0% {
+        -webkit-transform: translate(2px, 0);
+    }
+
+    50% {
+        -webkit-transform: translate(-2px, 0);
+    }
+
+    100% {
+        -webkit-transform: translate(2px, 0);
+    }
 }
 
 .shake {
-	-webkit-animation-name: shaker;
-	-webkit-animation-duration: 0.1s;
-	-webkit-transform-origin:50% 50%;
-	-webkit-animation-timing-function: linear;
+    -webkit-animation-name: shaker;
+    -webkit-animation-duration: 0.1s;
+    -webkit-transform-origin: 50% 50%;
+    -webkit-animation-timing-function: linear;
 }
 
 ::-webkit-scrollbar {
@@ -191,6 +218,102 @@ a {
     outline: none;
 }
 
-::placeholder { 
+::placeholder {
     color: white;
+}
+
+.reminder-list {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+    border-radius: 6px;
+    background-color: transparent;
+    transition: transform 0.3s ease-in-out;
+}
+
+.reminder-list h2 {
+    font-size: 24px;
+    margin-top: 0;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px
+}
+
+.reminder-list h2 span:hover {
+    cursor: pointer;
+}
+
+.reminder-list form {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.reminder-list input[type="text"] {
+    flex-grow: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    margin-right: 10px;
+    color: white;
+    background-color: var(--color-main);
+    border: 1px solid #ccc;
+}
+
+.reminder-list button[type="submit"] {
+    border: none;
+    border-radius: 5px;
+    background-color: transparent;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+    border: 1px solid #ccc;
+}
+
+.reminder-list button[type="submit"] span {
+    color:white;
+    position: relative;
+    top: 3px;
+}
+
+.reminder-list ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    transition: transform 0.3s ease-in-out;
+}
+
+.reminder-list .reminder-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: transparent;
+    color: white;
+}
+
+.reminder-list .reminder-item button {
+    padding: 0 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: transparent;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.reminder-list .reminder-item button span {
+    position: relative;
+    color: white;
+    top: 4px;
+}
+
+.reminder-list .reminder-item button .is-repeat {
+    color: var(--color-pink);
 }

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { googleLogout, useGoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
 import { CalendarSelect } from './CalendarSelect';
-import { setCookie, getCookie } from './Cookie';
+import { setCookie, getCookie } from './cookie';
 
 export function Login(props) {
     const [user, setUser] = useState(getCookie("user") ? JSON.parse(getCookie("user")) : null);
@@ -100,7 +100,7 @@ export function Login(props) {
             selectedCalendarIdList.forEach(id => {
                 if (id && !eventSource.includes(id)) props.calendarRef.current.getApi().addEventSource({
                     googleCalendarId: id,
-                    color: 'rgba(29,117,183,0.5)',
+                    color: 'rgba(32,120,254,0.5)',
                     id: id
                 });
             })
