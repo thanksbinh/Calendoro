@@ -10,7 +10,7 @@ export function App() {
     const [state, setState] = useState('');
     const [setting, setSetting] = useState({
         focusDur: 25 * 60 * 1000,
-        shortBreakDur: 5 * 60 * 1000,
+        shortBreakDur: 0.1 * 60 * 1000,
         longBreakDur: 15 * 60 * 1000,
         maxFocusCount: 4,
     });
@@ -24,6 +24,7 @@ export function App() {
         setState(state);
     };
 
+    // Todo: add animation
     useEffect(() => {
         switch (state) {
             case "Focus":
