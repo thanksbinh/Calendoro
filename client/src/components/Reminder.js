@@ -3,6 +3,9 @@ import '../style/reminder.css';
 
 export function Reminder() {
     // ["Look outside", "Stand up", "Exercise"]
+    if (!localStorage.getItem("reminderList")) {
+        localStorage.setItem("reminderList", JSON.stringify([]))
+    }
 
     const [reminders, setReminders] = useState(JSON.parse(localStorage.getItem("reminderList")));
     const [currentReminder, setCurrentReminder] = useState("");
@@ -12,6 +15,10 @@ export function Reminder() {
 
     // Hide input box and show button to reveal
     useEffect(() => {
+        if (!localStorage.getItem("reminderList")) {
+            localStorage.setItem("reminderList", JSON.stringify([]))
+        }
+        
         const inputBox = reminderRef.current.children[1];
         inputBox.style.display = 'none';
 
