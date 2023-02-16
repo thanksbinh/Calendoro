@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
-import PropTypes from 'prop-types';
 import useSound from 'use-sound';
 import toneSound from '../assets/sounds/tone.wav';
 import axios from "axios";
-import { getCookie } from "./Cookie";
+import { getCookie } from "./cookie";
 
 export function Pomodoro(props) {
     const [state, setState] = useState("");
@@ -23,14 +22,6 @@ export function Pomodoro(props) {
     }, [])
 
     useEffect(() => {
-        switch (state) {
-            case "Focus":
-            case "":
-                document.querySelector(':root').style.setProperty('--color-main', 'rgba(191,53,51,1)');
-                break;
-            default:
-                document.querySelector(':root').style.setProperty('--color-main', 'rgba(29,117,183,1)');
-        };
         props.passState(state);
     }, [state]) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -164,18 +155,11 @@ export function Pomodoro(props) {
 }
 
 const State = (props) => {
-    let elements = []
-
-    for (let state of ["Focus", "Short Break", "Long Break"]) {
-        if (state === props.active)
-            elements.push(<li className="list-group-item active" key={state}> {state} </li>)
-        else
-            elements.push(<li className="list-group-item" key={state}> {state} </li>)
-    }
-
     return (
         <ul className="list-group list-group-horizontal">
-            {elements.map((el) => el)}
+            <li className={"list-group-item" + (props.active === "Focus" ? " active" : "")}> Focus </li>
+            <li className={"list-group-item" + (props.active === "Short Break" ? " active" : "")}> Short Break </li>
+            <li className={"list-group-item" + (props.active === "Long Break" ? " active" : "")}> Long Break </li>
         </ul>
     )
 }

@@ -24,8 +24,19 @@ export function App() {
         setState(state);
     };
 
+    useEffect(() => {
+        switch (state) {
+            case "Focus":
+            case "":
+                document.querySelector(':root').style.setProperty('--color-main', 'rgba(191,53,51,1)');
+                break;
+            default:
+                document.querySelector(':root').style.setProperty('--color-main', 'rgba(29,117,183,1)');
+        };
+    }, [state]) // eslint-disable-line react-hooks/exhaustive-deps
+
     return (
-        <div className="container-fluid text-white">
+        <div className="background-container container-fluid text-white">
             <div className="d-flex justify-content-center">
                 <Navbar calendarRef={calendarRef} setSetting={setSetting} />
             </div>
@@ -43,7 +54,7 @@ export function App() {
                     <Pomodoro setting={setting} passState={passState} />
                 </div>
                 <div className='col'>
-                    <Reminder state={state}/>
+                    {state.includes("Break") ? <Reminder/> : ""}
                 </div>
             </div>
             <div className="d-flex justify-content-center">
