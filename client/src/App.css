@@ -228,7 +228,7 @@ a {
     padding: 20px;
     border-radius: 6px;
     background-color: transparent;
-    transition: height 0.3s ease-in-out;
+    transition: transform 0.3s ease-in-out;
 }
 
 .reminder-list h2 {

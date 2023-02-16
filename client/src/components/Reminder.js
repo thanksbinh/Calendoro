@@ -30,6 +30,8 @@ export function Reminder() {
     }, [reminders, inputVisibility]);
 
     const effectAddReminder = () => {
+        if (reminders.length === 0) return;
+
         const list = listRef.current;
         const firstItem = list.firstChild;
         const offset = firstItem.offsetHeight;
@@ -37,11 +39,6 @@ export function Reminder() {
 
         list.style.transition = 'none';
         list.style.transform = `translateY(-${offset}px)`;
-
-        firstItem.style.opacity = '0';
-        setTimeout(() => {
-            firstItem.style.opacity = '1';
-        }, 350);
 
         setTimeout(() => {
             list.style.transition = transition;
@@ -75,8 +72,7 @@ export function Reminder() {
         reminderRef.current.style.height = `${reminderRef.current.offsetHeight - itemHeight - 10}px`;
 
         setTimeout(() => {
-            // setReminders((prevItems) => prevItems.filter((_, index) => index !== removedIndex));
-            item.style.display = 'none';
+            setReminders((prevItems) => prevItems.filter((_, index) => index !== removedIndex));
 
             itemsAfterRemoved.forEach((currentItem) => {
                 currentItem.style.transition = "";
@@ -113,7 +109,7 @@ export function Reminder() {
         if (event) event.preventDefault();
         if (currentReminder) {
             addReminder();
-            if (reminders.length >= 0) effectAddReminder();
+            effectAddReminder();
         }
     };
 
@@ -172,7 +168,7 @@ export function Reminder() {
             </form>
             <ul ref={listRef}>
                 {reminders.map((reminder, index) => (
-                    <li key={index} className="reminder-item">
+                    <li key={reminder} className="reminder-item">
                         {reminder}
                         <div>
                             <button onClick={() => markRepeat(index)}>
