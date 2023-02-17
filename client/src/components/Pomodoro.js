@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import useSound from 'use-sound';
+import React, { useEffect, useRef, useState } from "react";
 import darlingMp3 from '../assets/sounds/darling.mp3';
 import axios from "axios";
 import { getCookie } from "./cookie";
@@ -9,8 +8,8 @@ export function Pomodoro(props) {
     const [curTime, setCurTime] = useState(new Date());
     const [startTime, setStartTime] = useState(new Date());
     const [focusCount, setFocusCount] = useState(0);
-    const [play] = useSound(darlingMp3, { volume: 0.6 });
     const [bonusTime, setBonusTime] = useState(0);
+    const audio = useRef();
 
     let timeRemains = getTimeRemains();
     let timeRemainsString = getTimeRemainsFormat(timeRemains);
@@ -28,9 +27,15 @@ export function Pomodoro(props) {
     useEffect(() => {
         changeTitle(timeRemainsString + " - " + getTask());
         if (timeRemainsString === "00:02") {
-            play();
+            playSound();
         }
-    }, [timeRemainsString, play])
+    }, [timeRemainsString])
+
+    function playSound() {
+        if (audio.current.readyState === 4) {
+            audio.current.play();
+        }
+    }
 
     function getTask() {
         let taskInput = document.querySelector('.taskInput').value;
@@ -150,6 +155,9 @@ export function Pomodoro(props) {
                     <Button click={onEnd} value={"End"} />
                 </div>
             </div>
+            <audio ref={audio}>
+                <source src={darlingMp3} type="audio/mpeg" />
+            </audio>
         </div>
     )
 }

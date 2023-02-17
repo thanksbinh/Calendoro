@@ -26,7 +26,7 @@ export function TodayGoal(props) {
                 timeSum -= event._instance.range.end - event._instance.range.start;
             }
         }
-        setTodayGoal(Math.ceil(timeSum/(25*60*1000)));
+        setTodayGoal(Math.ceil(timeSum/(30*60*1000)));
     } 
 
     useEffect(() => {

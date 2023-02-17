@@ -1,7 +1,7 @@
 :root {
-    --color-main: #FF1D43;
+    --color-main: rgba(255,29,67,1);
     --color-pink: rgba(240, 178, 188, 1);
-    --color-blue: #2078FE;
+    --color-blue: rgba(32,120,254,1);
     --color-green: rgb(139, 199, 195);
 }
 
@@ -23,11 +23,16 @@ a {
     height: 100%;
 }
 
-.background-image {
-    background-image: url('../public/background.jpg');
-    background-repeat: no-repeat;
-    background-attachment: fixed;
+.cover-img {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     background-size: cover;
+    background-position: center;
+    transform: translateX(100%);
+    z-index: 999;
 }
 
 .navbar {
