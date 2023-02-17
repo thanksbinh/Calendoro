@@ -145,7 +145,7 @@ export function Pomodoro(props) {
         <div className="pomodoro">
             <div className="h-100 d-flex flex-column justify-content-around align-items-center">
                 <State active={state}></State>
-                <Clock value={timeRemainsString}></Clock>
+                <Clock value={props.freezeDoro ? "00:00" : timeRemainsString}></Clock>
                 <div className="d-flex gap-2">
                     {state === "Focus" ?
                         (focusCount + 1 !== props.setting.maxFocusCount ?

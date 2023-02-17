@@ -15,6 +15,10 @@ export function Reminder() {
     useEffect(() => {
         const inputBox = reminderRef.current.children[1];
         inputBox.style.display = 'none';
+
+        setTimeout(() => {
+            reminderRef.current.style.opacity = "1";
+        }, 350)
     }, [])
     useEffect(() => {
         const addInputBtn = reminderRef.current.querySelector('.show-input-btn');
