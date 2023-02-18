@@ -51,7 +51,7 @@ export function Pomodoro(props) {
     // Sent nothing if not logged in
     async function updateHistory() {
         if (state !== "Focus") return;
-        // if (curTime - startTime <= 5*60*1000) return;
+        if (curTime - startTime <= 5*60*1000) return;
         
         let object = {
             "userId": getCookie("profile") ? JSON.parse(getCookie("profile")).id : "",

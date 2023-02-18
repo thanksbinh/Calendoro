@@ -41,11 +41,7 @@ export function App() {
     function getNewCoverPos() {
         const coverPos = ["translateX(100%)", "translateX(-100%)", "translateY(100%)", "translateY(-100%)"];
 
-        let newPosId = Math.floor(Math.random() * 4);
-        if (coverPos[newPosId] === coverImgRef.current.style.transform) {
-            newPosId = (newPosId + 1) % 4;
-        }
-        return coverPos[newPosId];
+        return coverPos[Math.floor(Math.random() * 4)];
     }
 
     useEffect(() => {
@@ -83,7 +79,7 @@ export function App() {
             setFreezeDoro(false);
         }, 700)
 
-    }, [state]) // eslint-disable-line react-hooks/exhaustive-deps
+    }, [state])
 
     return (
         <AppContext.Provider value={{
