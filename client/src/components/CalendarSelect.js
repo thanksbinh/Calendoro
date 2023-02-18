@@ -1,11 +1,11 @@
 import React, { useState, useContext } from "react";
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
-import CalendarContext from './CalendarContext';
+import CalendarContext from '../javascript/CalendarContext';
 
 export function CalendarSelect() {
     const { calendarList, calendarSelectMode, setCalendarSelectMode, selectedCalendarIdList, selectCalendarIdList } = useContext(CalendarContext);
-    
+
     const [thisSelectedCalendarIdList, thisSelectCalendarIdList] = useState(selectedCalendarIdList);
 
     const onSubmit = () => {

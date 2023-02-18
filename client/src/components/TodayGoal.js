@@ -1,16 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import AppContext from "../javascript/AppContext";
 
 export function TodayGoal(props) {
+    const { calendarRef } = useContext(AppContext);
+
     const [todayGoal, setTodayGoal] = useState(0);
 
     const getTodayGoal = () => {
         console.log("getTodayGoal");
 
-        if (!props.calendarRef.current) {
+        if (!calendarRef.current) {
             console.log('too fast');
             return;
         }
-        let calendarApi = props.calendarRef.current.getApi();
+        let calendarApi = calendarRef.current.getApi();
         let events = calendarApi.getEvents();
         let timeSum = 0;
         for (let event of events) {

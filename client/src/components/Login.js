@@ -2,11 +2,13 @@ import React, { useState, useEffect, useContext } from 'react';
 import { googleLogout, useGoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
 import { CalendarSelect } from './CalendarSelect';
-import { setCookie, getCookie } from './cookie';
-import CalendarContext from './CalendarContext';
+import { setCookie, getCookie } from '../javascript/cookie';
+import CalendarContext from '../javascript/CalendarContext';
+import AppContext from '../javascript/AppContext';
 
 export function Login(props) {
     const { selectedCalendarIdList, selectCalendarIdList, updateCalendar } = useContext(CalendarContext);
+    const { calendarRef } = useContext(AppContext)
 
     const [user, setUser] = useState(getCookie("user") ? JSON.parse(getCookie("user")) : null);
     const [profile, setProfile] = useState(getCookie("profile") ? JSON.parse(getCookie("profile")) : null);
@@ -73,7 +75,9 @@ export function Login(props) {
 
     useEffect(() => {
         function updateCalendarSource() {
-            const eventSources = props.calendarRef.current.getApi().getEventSources();
+            if (!calendarRef.current) return;
+
+            const eventSources = calendarRef.current.getApi().getEventSources();
             eventSources.forEach(source => {
                 source.remove();
             })
@@ -82,7 +86,7 @@ export function Login(props) {
                 return;
             }
 
-            props.calendarRef.current.getApi().addEventSource({
+            calendarRef.current.getApi().addEventSource({
                 events: async function () {
                     const res = await axios.get("http://localhost:3001/post", {
                         params: { userId: profile.id }
@@ -94,7 +98,7 @@ export function Login(props) {
             });
 
             selectedCalendarIdList.forEach(id => {
-                props.calendarRef.current.getApi().addEventSource({
+                calendarRef.current.getApi().addEventSource({
                     googleCalendarId: id,
                     color: 'rgba(32,120,254,0.5)',
                     id: id
@@ -116,7 +120,7 @@ export function Login(props) {
             ) : (
                 <span className="material-symbols-outlined p-2 login-btn" onClick={() => login()}>login</span>
             )}
-            <CalendarSelect calendarRef={props.calendarRef} />
+            <CalendarSelect/>
         </div>
     );
 }

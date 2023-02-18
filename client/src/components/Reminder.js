@@ -1,8 +1,7 @@
 import React, { useRef, useState, useLayoutEffect, useEffect } from "react";
+import '../style/reminder.css';
 
 export function Reminder() {
-    // Todo: congrat and hide component when done all
-    // Might-do: Timer for few quests, add time criteria (exercise after 2h)
     // ["Look outside", "Stand up", "Exercise"]
 
     const [reminders, setReminders] = useState(JSON.parse(localStorage.getItem("reminderList")));

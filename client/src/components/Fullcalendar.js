@@ -1,21 +1,24 @@
-import React from "react";
+import React, { useContext } from "react";
 import FullCalendar from '@fullcalendar/react';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import googleCalendarPlugin from '@fullcalendar/google-calendar';
 import key from "../assets/key/key";
+import AppContext from "../javascript/AppContext";
 
-export function Fullcalendar(props) {
+export function Fullcalendar() {
+    const { calendarRef } = useContext(AppContext);
+
     const scrollTime = (new Date().getHours() - 2).toString().padStart(2, '0') + ":00:00";
     
     function refresh() {
-        props.calendarRef.current.getApi().refetchEvents();
+        calendarRef.current.getApi().refetchEvents();
     }
 
     return (
         <div className='fullcalendar'>
             <FullCalendar
                 plugins={[ timeGridPlugin, googleCalendarPlugin ]}
-                ref={props.calendarRef}
+                ref={calendarRef}
                 initialView="timeGridWeek"
                 googleCalendarApiKey={key.googleCalendarApiKey} 
                 nowIndicator={true}

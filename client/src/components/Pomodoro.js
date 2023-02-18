@@ -1,10 +1,12 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import darlingMp3 from '../assets/sounds/darling.mp3';
 import axios from "axios";
-import { getCookie } from "./cookie";
+import { getCookie } from "../javascript/cookie";
+import AppContext from "../javascript/AppContext";
 
 export function Pomodoro(props) {
-    const [state, setState] = useState("");
+    const { state, setState } = useContext(AppContext);
+
     const [curTime, setCurTime] = useState(new Date());
     const [startTime, setStartTime] = useState(new Date());
     const [focusCount, setFocusCount] = useState(0);
@@ -122,8 +124,10 @@ export function Pomodoro(props) {
                 return props.setting.shortBreakDur - (curTime - startTime) + (bonusTime > 0 ? bonusTime : 0);
             case "Long Break":
                 return props.setting.longBreakDur - (curTime - startTime);
-            default:
+            case "":
                 return props.setting.focusDur;
+            default:
+                console.log("state invalid");
         };
     }
 

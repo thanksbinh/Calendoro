@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Login } from "./Login";
 import { Setting } from "./Setting";
-import CalendarContext from './CalendarContext';
-import { getCookie } from "./cookie";
+import CalendarContext from '../javascript/CalendarContext';
+import { getCookie } from "../javascript/cookie";
 import axios from 'axios';
 
 export function Navbar(props) {
@@ -50,7 +50,7 @@ export function Navbar(props) {
                 <div className="tools d-flex justify-content-end align-items-center h-100">
                     <span className="material-symbols-outlined toggle-calendar-btn p-2" onClick={onToggleCalendar}>event</span>
                     <Setting setSetting={props.setSetting} />
-                    <Login calendarRef={props.calendarRef} />
+                    <Login/>
                 </div>
             </div>
         </CalendarContext.Provider>

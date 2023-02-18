@@ -1,8 +1,8 @@
 import React, { useState, useContext } from "react";
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
-import './setting.css';
-import CalendarContext from './CalendarContext';
+import '../style/setting.css';
+import CalendarContext from '../javascript/CalendarContext';
 
 export function Setting(props) {
     const { updateCalendar } = useContext(CalendarContext);
