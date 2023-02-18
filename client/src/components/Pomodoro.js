@@ -1,16 +1,17 @@
-import React, { useEffect, useState } from "react";
-import useSound from 'use-sound';
+import React, { useContext, useEffect, useRef, useState } from "react";
 import darlingMp3 from '../assets/sounds/darling.mp3';
 import axios from "axios";
-import { getCookie } from "./cookie";
+import { getCookie } from "../javascript/cookie";
+import AppContext from "../javascript/AppContext";
 
 export function Pomodoro(props) {
-    const [state, setState] = useState("");
+    const { state, setState, calendarRef } = useContext(AppContext);
+
     const [curTime, setCurTime] = useState(new Date());
     const [startTime, setStartTime] = useState(new Date());
     const [focusCount, setFocusCount] = useState(0);
-    const [play] = useSound(darlingMp3, { volume: 0.6 });
     const [bonusTime, setBonusTime] = useState(0);
+    const audio = useRef();
 
     let timeRemains = getTimeRemains();
     let timeRemainsString = getTimeRemainsFormat(timeRemains);
@@ -28,9 +29,15 @@ export function Pomodoro(props) {
     useEffect(() => {
         changeTitle(timeRemainsString + " - " + getTask());
         if (timeRemainsString === "00:02") {
-            play();
+            playSound();
         }
-    }, [timeRemainsString, play])
+    }, [timeRemainsString])
+
+    function playSound() {
+        if (audio.current.readyState === 4) {
+            audio.current.play();
+        }
+    }
 
     function getTask() {
         let taskInput = document.querySelector('.taskInput').value;
@@ -44,17 +51,39 @@ export function Pomodoro(props) {
     // Sent nothing if not logged in
     async function updateHistory() {
         if (state !== "Focus") return;
-        if (curTime - startTime <= 5*60*1000) return;
-
-        if (!getCookie("profile")) return;
+        // if (curTime - startTime <= 5*60*1000) return;
+        
         let object = {
-            "userId": JSON.parse(getCookie("profile")).id,
+            "userId": getCookie("profile") ? JSON.parse(getCookie("profile")).id : "",
             "start": startTime,
             "end": curTime,
             "title": getTask()
         };
-        await axios.post("http://localhost:3001/post", object);
-        console.log("sent", object);
+
+        // Push this object to local history
+        if (!localStorage.getItem("history")) {
+            const objectStr = JSON.stringify(object);
+            localStorage.setItem("history", JSON.stringify([objectStr]))
+        } else {
+            const history = JSON.parse(localStorage.getItem("history")); 
+            const objectStr = JSON.stringify(object);
+
+            localStorage.setItem("history", JSON.stringify([objectStr, ...history]));
+        }
+
+        // Push this object to the database if logged in
+        if (getCookie("profile")) {
+            const res = await axios.post("http://localhost:3001/post", object);
+
+            if (res) {
+                console.log("sent", res);
+
+                const history = JSON.parse(localStorage.getItem("history")); 
+                localStorage.setItem("history", JSON.stringify(history.slice(1)));
+            }
+
+            calendarRef.current.getApi().refetchEvents();
+        } 
     }
 
     function checkTask() {
@@ -117,8 +146,10 @@ export function Pomodoro(props) {
                 return props.setting.shortBreakDur - (curTime - startTime) + (bonusTime > 0 ? bonusTime : 0);
             case "Long Break":
                 return props.setting.longBreakDur - (curTime - startTime);
-            default:
+            case "":
                 return props.setting.focusDur;
+            default:
+                console.log("state invalid");
         };
     }
 
@@ -140,7 +171,7 @@ export function Pomodoro(props) {
         <div className="pomodoro">
             <div className="h-100 d-flex flex-column justify-content-around align-items-center">
                 <State active={state}></State>
-                <Clock value={timeRemainsString}></Clock>
+                <Clock value={props.freezeDoro ? "00:00" : timeRemainsString}></Clock>
                 <div className="d-flex gap-2">
                     {state === "Focus" ?
                         (focusCount + 1 !== props.setting.maxFocusCount ?
@@ -150,6 +181,9 @@ export function Pomodoro(props) {
                     <Button click={onEnd} value={"End"} />
                 </div>
             </div>
+            <audio ref={audio}>
+                <source src={darlingMp3} type="audio/mpeg" />
+            </audio>
         </div>
     )
 }

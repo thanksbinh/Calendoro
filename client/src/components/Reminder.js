@@ -1,8 +1,7 @@
 import React, { useRef, useState, useLayoutEffect, useEffect } from "react";
+import '../style/reminder.css';
 
 export function Reminder() {
-    // Todo: congrat and hide component when done all
-    // Might-do: Timer for few quests, add time criteria (exercise after 2h)
     // ["Look outside", "Stand up", "Exercise"]
 
     const [reminders, setReminders] = useState(JSON.parse(localStorage.getItem("reminderList")));
@@ -15,6 +14,10 @@ export function Reminder() {
     useEffect(() => {
         const inputBox = reminderRef.current.children[1];
         inputBox.style.display = 'none';
+
+        setTimeout(() => {
+            reminderRef.current.style.opacity = "1";
+        }, 350)
     }, [])
     useEffect(() => {
         const addInputBtn = reminderRef.current.querySelector('.show-input-btn');
