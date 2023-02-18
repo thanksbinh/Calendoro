@@ -20,10 +20,13 @@ export function App() {
     const coverImgRef = useRef(null);
     const coverPos = ["translateX(100%)", "translateX(-100%)", "translateY(100%)", "translateY(-100%)"];
     const [freezeDoro, setFreezeDoro] = useState(false);
+    const [cover, setCover] = useState(redBackgroundImg);
 
     useEffect(() => {
-        coverImgRef.current.style.backgroundImage = `url(${redBackgroundImg})`;
-        coverImgRef.current.style.backgroundImage = `url(${blueBackgroundImg})`;
+        setCover(blueBackgroundImg);
+        setTimeout(() => {
+            setCover(redBackgroundImg);
+        }, 350)
     }, [])
 
     useEffect(() => {
@@ -34,27 +37,29 @@ export function App() {
         setState(state);
     };
 
+    function getNewCoverPosId() {
+        let newPosId = Math.floor(Math.random() * 4);
+        if (coverPos[newPosId] === coverImgRef.current.style.transform) {
+            newPosId = (newPosId + 1) % 4;
+        }
+        return newPosId;
+    }
+
     useEffect(() => {
-        // No cover transition
         if (getComputedStyle(document.querySelector(':root')).getPropertyValue("--color-main").includes("rgba(255,29,67,1)")) {
             if (state === "Focus" || state === "") {
                 return;
             }
 
-            coverImgRef.current.style.backgroundImage = `url(${redBackgroundImg})`;
+            setCover(redBackgroundImg);
             setTimeout(() => {
-                coverImgRef.current.style.backgroundImage = `url(${blueBackgroundImg})`;
+                setCover(blueBackgroundImg);
             }, 350)
         } else {
-            coverImgRef.current.style.backgroundImage = `url(${blueBackgroundImg})`;
+            setCover(blueBackgroundImg);
             setTimeout(() => {
-                coverImgRef.current.style.backgroundImage = `url(${redBackgroundImg})`;
+                setCover(redBackgroundImg);
             }, 350)
-        }
-
-        let newPosId = Math.floor(Math.random() * 4);
-        if (coverPos[newPosId] === coverImgRef.current.style.transform) {
-            newPosId = (newPosId + 1) % 4;
         }
 
         coverImgRef.current.style.transition = `transform 0.35s ease-out`;
@@ -71,7 +76,7 @@ export function App() {
                     document.querySelector(':root').style.setProperty('--color-main', 'rgba(32,120,254,1)');
             };
 
-            coverImgRef.current.style.transform = coverPos[newPosId];
+            coverImgRef.current.style.transform = coverPos[getNewCoverPosId()];
             setFreezeDoro(false);
         }, 700)
 
@@ -103,7 +108,7 @@ export function App() {
                 <Task isDisabled={state === "Focus"} />
             </div>
 
-            <div className='cover-img' ref={coverImgRef}></div>
+            <div className='cover-img' ref={coverImgRef} style={{ backgroundImage: `url("${cover}")`}}></div>
         </div>
     )
 }

@@ -1,39 +1,49 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
+import CalendarContext from './CalendarContext';
 
-export function CalendarSelect(props) {
-    const [selectedCalendarIdList, selectCalendarIdList] = useState([]);
+export function CalendarSelect() {
+    const { calendarList, calendarSelectMode, setCalendarSelectMode, selectedCalendarIdList, selectCalendarIdList } = useContext(CalendarContext);
+    
+    const [thisSelectedCalendarIdList, thisSelectCalendarIdList] = useState(selectedCalendarIdList);
 
     const onSubmit = () => {
-        props.selectCalendarIdList(selectedCalendarIdList);
-        selectCalendarIdList([]);
+        selectCalendarIdList(thisSelectedCalendarIdList);
+        thisSelectCalendarIdList([]);
+        setCalendarSelectMode(false);
     }
 
     const handleOnChange = (i) => {
-        if (selectedCalendarIdList.includes(props.calendarList[i].id)) {
-            selectCalendarIdList(selectedCalendarIdList.filter(item => item !== props.calendarList[i].id))
+        if (thisSelectedCalendarIdList.includes(calendarList[i].id)) {
+            thisSelectCalendarIdList(thisSelectedCalendarIdList.filter(item => item !== calendarList[i].id))
         } else {
-            selectCalendarIdList([...selectedCalendarIdList, props.calendarList[i].id]);
+            thisSelectCalendarIdList([...thisSelectedCalendarIdList, calendarList[i].id]);
         }
     }
 
     return (
-        <Popup open={props.open} modal>
+        <Popup open={calendarSelectMode} onClose={() => setCalendarSelectMode(false)}  modal>
             <legend className="legend-checkbox">Select calendar(s) to display </legend>
-            <div className="input-checkbox">
-                {props.calendarList.map((calendar, i) => {
+            <React.Fragment>
+                {calendarList.map((calendar, i) => {
                     return (
-                        <div className="form-check" key={i}>
-                            <input className="form-check-input" type="checkbox" value="" id={"check"+i} onChange={() => handleOnChange(i)}/>
+                        <div className="form-check" key={calendar.id}>
+                            <input className="form-check-input" type="checkbox" checked={thisSelectedCalendarIdList.includes(calendar.id)} id={"check"+i} onChange={() => handleOnChange(i)}/>
                             <label className="form-check-label" htmlFor={"check"+i}>
                                 {calendar.summary}
                             </label>
                         </div>
                     )
                 })}
-            </div>
-            <button className="btn btn-primary" onClick={() => {props.setOpen(false); onSubmit();}}>Submit</button>
+            </React.Fragment>
+            <button 
+                className="btn btn-primary" 
+                disabled={!calendarSelectMode}
+                onClick={onSubmit}
+            >
+                Submit
+            </button>
         </Popup> 
     )
 } 

@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { googleLogout, useGoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
 import { CalendarSelect } from './CalendarSelect';
 import { setCookie, getCookie } from './cookie';
+import CalendarContext from './CalendarContext';
 
 export function Login(props) {
+    const { selectedCalendarIdList, selectCalendarIdList, updateCalendar } = useContext(CalendarContext);
+
     const [user, setUser] = useState(getCookie("user") ? JSON.parse(getCookie("user")) : null);
     const [profile, setProfile] = useState(getCookie("profile") ? JSON.parse(getCookie("profile")) : null);
-    const [calendarList, setCalendarList] = useState([]);
-    const [calendarSelectMode, setCalendarSelectMode] = useState(false);
-    const [selectedCalendarIdList, selectCalendarIdList] = useState(getCookie("selectedCalendarId") ? getCookie("selectedCalendarId").split(",") : []);
 
     const login = useGoogleLogin({
         onSuccess: (codeResponse) => setUser(codeResponse),
@@ -18,7 +18,7 @@ export function Login(props) {
     });
 
     const logOut = () => {
-        removeEventSources();
+        // removeEventSources();
 
         googleLogout();
         setProfile(null);
@@ -28,14 +28,6 @@ export function Login(props) {
         setCookie("user", "");
         setCookie("selectedCalendarId", "");
     };
-
-    // Remove every event source in calendarRef
-    const removeEventSources = () => {
-        let eventSource = props.calendarRef.current.getApi().getEventSources();
-        eventSource.forEach(source => {
-            source.remove();
-        })
-    }
 
     // When new login section, no user in cookie, update profile, select user's calendar, 
     // add user to database if not existed
@@ -62,10 +54,10 @@ export function Login(props) {
                 })
                 setProfile(res.data);
                 setCookie("profile", JSON.stringify(res.data));
-                
+
                 const userExist = await axios.get("http://localhost:3001/login", {
                     params: {
-                        userId: res.data.id 
+                        userId: res.data.id
                     }
                 });
                 if (!userExist.data) await newUser(res.data);
@@ -74,59 +66,46 @@ export function Login(props) {
                 }
             }
 
-            async function updateCalendar() {
-                const res = await axios.get(`https://www.googleapis.com/calendar/v3/users/me/calendarList`, {
-                    headers: {
-                        Authorization: `Bearer ${user.access_token}`,
-                        Accept: 'application/json'
-                    }
-                });
-                res.data.items.sort((a, b) => a.summary.localeCompare(b.summary));
-                setCalendarList(res.data.items);
-                setCalendarSelectMode(true);
-            }
-
             updateProfile();
             updateCalendar();
         }
-    }, [user]);
+    }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    // When selectedCalendarIdList change, add event sources if not already added
     useEffect(() => {
-        const addEventSources = () => {
-            let eventSource = props.calendarRef.current.getApi().getEventSources();
-            eventSource = eventSource.map(source => source.internalEventSource.meta.googleCalendarId);
+        function updateCalendarSource() {
+            const eventSources = props.calendarRef.current.getApi().getEventSources();
+            eventSources.forEach(source => {
+                source.remove();
+            })
+
+            if (!profile) {
+                return;
+            }
+
+            props.calendarRef.current.getApi().addEventSource({
+                events: async function () {
+                    const res = await axios.get("http://localhost:3001/post", {
+                        params: { userId: profile.id }
+                    });
+                    return res.data;
+                },
+                color: 'rgba(240,178,188,1)',
+                id: profile.id
+            });
 
             selectedCalendarIdList.forEach(id => {
-                if (id && !eventSource.includes(id)) props.calendarRef.current.getApi().addEventSource({
+                props.calendarRef.current.getApi().addEventSource({
                     googleCalendarId: id,
                     color: 'rgba(32,120,254,0.5)',
                     id: id
                 });
             })
+
             setCookie("selectedCalendarId", selectedCalendarIdList, 30);
         }
 
-        addEventSources();
-    }, [props.calendarRef, selectedCalendarIdList])
-
-    // Update user history event if profile != null 
-    useEffect(() => {
-        async function addUserHistory() {
-            if (profile) props.calendarRef.current.getApi().addEventSource({
-                events: async function() {
-                    const res = await axios.get("http://localhost:3001/post", { 
-                        params: {userId: profile.id}
-                    });
-                    return res.data;
-                }, 
-                color: 'rgba(240,178,188,1)',
-                id: profile.id
-            });
-        }
-
-        addUserHistory();
-    }, [profile]); // eslint-disable-line react-hooks/exhaustive-deps
+        updateCalendarSource();
+    }, [profile, selectedCalendarIdList]) // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
         <div>
@@ -137,7 +116,7 @@ export function Login(props) {
             ) : (
                 <span className="material-symbols-outlined p-2 login-btn" onClick={() => login()}>login</span>
             )}
-            <CalendarSelect calendarList={calendarList} open={calendarSelectMode} setOpen={setCalendarSelectMode} calendarRef={props.calendarRef} selectCalendarIdList={selectCalendarIdList} />
+            <CalendarSelect calendarRef={props.calendarRef} />
         </div>
     );
 }
