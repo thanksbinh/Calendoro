@@ -5,7 +5,7 @@ import { getCookie } from "../javascript/cookie";
 import AppContext from "../javascript/AppContext";
 
 export function Pomodoro(props) {
-    const { state, setState } = useContext(AppContext);
+    const { state, setState, calendarRef } = useContext(AppContext);
 
     const [curTime, setCurTime] = useState(new Date());
     const [startTime, setStartTime] = useState(new Date());
@@ -51,17 +51,39 @@ export function Pomodoro(props) {
     // Sent nothing if not logged in
     async function updateHistory() {
         if (state !== "Focus") return;
-        if (curTime - startTime <= 5*60*1000) return;
-
-        if (!getCookie("profile")) return;
+        // if (curTime - startTime <= 5*60*1000) return;
+        
         let object = {
-            "userId": JSON.parse(getCookie("profile")).id,
+            "userId": getCookie("profile") ? JSON.parse(getCookie("profile")).id : "",
             "start": startTime,
             "end": curTime,
             "title": getTask()
         };
-        await axios.post("http://localhost:3001/post", object);
-        console.log("sent", object);
+
+        // Push this object to local history
+        if (!localStorage.getItem("history")) {
+            const objectStr = JSON.stringify(object);
+            localStorage.setItem("history", JSON.stringify([objectStr]))
+        } else {
+            const history = JSON.parse(localStorage.getItem("history")); 
+            const objectStr = JSON.stringify(object);
+
+            localStorage.setItem("history", JSON.stringify([objectStr, ...history]));
+        }
+
+        // Push this object to the database if logged in
+        if (getCookie("profile")) {
+            const res = await axios.post("http://localhost:3001/post", object);
+
+            if (res) {
+                console.log("sent", res);
+
+                const history = JSON.parse(localStorage.getItem("history")); 
+                localStorage.setItem("history", JSON.stringify(history.slice(1)));
+            }
+
+            calendarRef.current.getApi().refetchEvents();
+        } 
     }
 
     function checkTask() {

@@ -1,9 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap');
 
 :root {
-    --color-main: rgba(255,29,67,1);
+    --color-main: rgba(255, 29, 67, 1);
     --color-pink: rgba(240, 178, 188, 1);
-    --color-blue: rgba(32,120,254,1);
+    --color-blue: rgba(32, 120, 254, 1);
     --color-green: rgb(139, 199, 195);
 }
 
@@ -229,5 +229,22 @@ a {
 
 ::placeholder {
     color: white;
+}
+
+.popup-warning {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.2);
+    color: white;
+    text-align: center;
+    z-index: 99;
+    opacity: 0;
+}
+
+.popup-warning.show {
+    opacity: 1;
 }
 

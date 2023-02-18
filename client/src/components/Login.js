@@ -6,7 +6,7 @@ import { setCookie, getCookie } from '../javascript/cookie';
 import CalendarContext from '../javascript/CalendarContext';
 import AppContext from '../javascript/AppContext';
 
-export function Login(props) {
+export function Login() {
     const { selectedCalendarIdList, selectCalendarIdList, updateCalendar } = useContext(CalendarContext);
     const { calendarRef } = useContext(AppContext)
 

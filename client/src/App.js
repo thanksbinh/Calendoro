@@ -12,7 +12,6 @@ import AppContext from './javascript/AppContext';
 export function App() {
     const [state, setState] = useState('');
     const calendarRef = useRef(null);
-
     const [setting, setSetting] = useState({
         focusDur: 25 * 60 * 1000,
         shortBreakDur: 5 * 60 * 1000,
@@ -50,7 +49,7 @@ export function App() {
     }
 
     useEffect(() => {
-        if (getComputedStyle(document.querySelector(':root')).getPropertyValue("--color-main").includes("rgba(255,29,67,1)")) {
+        if (getComputedStyle(document.querySelector(':root')).getPropertyValue("--color-main").includes("rgba(255, 29, 67, 1)")) {
             if (state === "Focus" || state === "") {
                 return;
             }
@@ -74,10 +73,10 @@ export function App() {
             switch (state) {
                 case "Focus":
                 case "":
-                    document.querySelector(':root').style.setProperty('--color-main', 'rgba(255,29,67,1)');
+                    document.querySelector(':root').style.setProperty('--color-main', 'rgba(255, 29, 67, 1)');
                     break;
                 default:
-                    document.querySelector(':root').style.setProperty('--color-main', 'rgba(32,120,254,1)');
+                    document.querySelector(':root').style.setProperty('--color-main', 'rgba(32, 120, 254, 1)');
             };
 
             coverImgRef.current.style.transform = getNewCoverPos();
@@ -91,10 +90,12 @@ export function App() {
             state,
             setState,
             calendarRef,
+            setting,
+            setSetting
         }}>
             <div className="background-container container-fluid text-white">
                 <div className="d-flex justify-content-center">
-                    <Navbar setSetting={setSetting} />
+                    <Navbar />
                 </div>
                 <div className="d-flex justify-content-center">
                     <TodayGoal />

@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import AppContext from "../javascript/AppContext";
 
-export function TodayGoal(props) {
+export function TodayGoal() {
     const { calendarRef } = useContext(AppContext);
 
     const [todayGoal, setTodayGoal] = useState(0);
@@ -36,7 +36,7 @@ export function TodayGoal(props) {
         setTimeout(() => {
             getTodayGoal();
         }, 2000)
-    }, [props]) // eslint-disable-line react-hooks/exhaustive-deps
+    }, [calendarRef]) // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
         <div className='goal text-center'>

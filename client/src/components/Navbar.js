@@ -5,10 +5,11 @@ import CalendarContext from '../javascript/CalendarContext';
 import { getCookie } from "../javascript/cookie";
 import axios from 'axios';
 
-export function Navbar(props) {
+export function Navbar() {
     const [calendarList, setCalendarList] = useState([]);
     const [calendarSelectMode, setCalendarSelectMode] = useState(false);
     const [selectedCalendarIdList, selectCalendarIdList] = useState(getCookie("selectedCalendarId") ? getCookie("selectedCalendarId").split(",") : []);
+
 
     function onToggleCalendar() {
         document.querySelector('.fullcalendar').classList.toggle('show');
@@ -17,16 +18,21 @@ export function Navbar(props) {
 
     async function updateCalendar() {
         if (!getCookie("user")) return;
-        
-        const res = await axios.get(`https://www.googleapis.com/calendar/v3/users/me/calendarList`, {
-            headers: {
-                Authorization: `Bearer ${JSON.parse(getCookie("user")).access_token}`,
-                Accept: 'application/json'
-            }
-        });
-        res.data.items.sort((a, b) => a.summary.localeCompare(b.summary));
-        setCalendarList(res.data.items);
-        setCalendarSelectMode(true);
+
+        try {
+            const res = await axios.get(`https://www.googleapis.com/calendar/v3/users/me/calendarList`, {
+                headers: {
+                    Authorization: `Bearer ${JSON.parse(getCookie("user")).access_token}`,
+                    Accept: 'application/json'
+                }
+            });
+            res.data.items.sort((a, b) => a.summary.localeCompare(b.summary));
+            setCalendarList(res.data.items);
+            setCalendarSelectMode(true);
+        } catch (error) {
+            console.log('Access_token outdated');
+            throw error
+        }
     }
 
     return (
@@ -49,11 +55,11 @@ export function Navbar(props) {
 
                 <div className="tools d-flex justify-content-end align-items-center h-100">
                     <span className="material-symbols-outlined toggle-calendar-btn p-2" onClick={onToggleCalendar}>event</span>
-                    <Setting setSetting={props.setSetting} />
-                    <Login/>
+                    <Setting />
+                    <Login />
                 </div>
             </div>
         </CalendarContext.Provider>
-
     )
 }
+
