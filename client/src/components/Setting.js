@@ -18,7 +18,6 @@ export function Setting() {
     const [longBreakDur, setLongBreakDur] = useState(setting.longBreakDur / (60 * 1000));
     const [maxFocusCount, setMaxFocusCount] = useState(setting.maxFocusCount);
 
-    const [showWarning, setShowWarning] = useState(false);
     const [warningMessage, setWarningMessage] = useState('');
 
     const handleSubmit = (event) => {
@@ -32,12 +31,11 @@ export function Setting() {
         setSettingMode(false);
     }
 
-    function handleSelectCalendar() {
+    async function handleSelectCalendar() {
         try {
-            updateCalendar();
+            await updateCalendar();
         } catch (error) {
-            setWarningMessage('Access_token outdated, please log in again!');
-            setShowWarning(true);
+            setWarningMessage('Access_token expires, please log in again!');
         }
     }
 
@@ -76,22 +74,18 @@ export function Setting() {
                     </form>
                 </div>
 
-                <PopupWarning warning={showWarning} warningMessage={warningMessage} />
+                <PopupWarning warningMessage={warningMessage} setWarningMessage={setWarningMessage} />
             </Popup>
         </div>
     )
 }
 
 function PopupWarning(props) {
-    const [show, setShow] = useState(false);
-
     useEffect(() => {
-        if (props.warning) {
-            setShow(true);
-
+        if (props.warningMessage) {
             // Auto hide the popup after 3 seconds
             const timeoutId = setTimeout(() => {
-                setShow(false);
+                props.setWarningMessage(null);
             }, 3000);
 
             // Cleanup function to cancel the timeout if component unmounts before timeout completes
@@ -99,10 +93,10 @@ function PopupWarning(props) {
                 clearTimeout(timeoutId);
             };
         }
-    }, [props.warning]);
+    }, [props]);
 
     return (
-        <div className={`popup-warning ${show ? 'show' : ''}`}>
+        <div className={`popup-warning ${props.warningMessage ? 'show' : ''}`}>
             <span>{props.warningMessage}</span>
         </div>
     );

@@ -1,17 +1,19 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import darlingMp3 from '../assets/sounds/darling.mp3';
+import jikangiriMp3 from '../assets/sounds/jikangiri.mp3';
 import axios from "axios";
 import { getCookie } from "../javascript/cookie";
 import AppContext from "../javascript/AppContext";
 
 export function Pomodoro(props) {
-    const { state, setState, calendarRef } = useContext(AppContext);
+    const { state, setState, calendarRef, setting, freezeDoro, setFreezeDoro } = useContext(AppContext);
 
     const [curTime, setCurTime] = useState(new Date());
     const [startTime, setStartTime] = useState(new Date());
     const [focusCount, setFocusCount] = useState(0);
     const [bonusTime, setBonusTime] = useState(0);
-    const audio = useRef();
+    const audioRef = useRef();
+    const [audioSrc, setAudioSrc] = useState(darlingMp3);
 
     let timeRemains = getTimeRemains();
     let timeRemainsString = getTimeRemainsFormat(timeRemains);
@@ -23,19 +25,27 @@ export function Pomodoro(props) {
     }, [])
 
     useEffect(() => {
-        props.passState(state);
-    }, [state]) // eslint-disable-line react-hooks/exhaustive-deps
-
-    useEffect(() => {
         changeTitle(timeRemainsString + " - " + getTask());
         if (timeRemainsString === "00:02") {
+            setAudioSrc(darlingMp3);
             playSound();
         }
-    }, [timeRemainsString])
+        if (timeRemainsString === "-59:59") {
+            setAudioSrc(jikangiriMp3);
+            playSound();
+
+            setFreezeDoro(true);
+            setTimeout(() => {
+                setFreezeDoro(false);
+                onEnd();
+            }, 4000)
+        }
+    }, [timeRemainsString]) // eslint-disable-line react-hooks/exhaustive-deps
 
     function playSound() {
-        if (audio.current.readyState === 4) {
-            audio.current.play();
+        if (audioRef.current.readyState === 4) {
+            audioRef.current.load();
+            audioRef.current.play();
         }
     }
 
@@ -51,8 +61,8 @@ export function Pomodoro(props) {
     // Sent nothing if not logged in
     async function updateHistory() {
         if (state !== "Focus") return;
-        if (curTime - startTime <= 5*60*1000) return;
-        
+        if (curTime - startTime <= 5 * 60 * 1000) return;
+
         let object = {
             "userId": getCookie("profile") ? JSON.parse(getCookie("profile")).id : "",
             "start": startTime,
@@ -65,7 +75,7 @@ export function Pomodoro(props) {
             const objectStr = JSON.stringify(object);
             localStorage.setItem("history", JSON.stringify([objectStr]))
         } else {
-            const history = JSON.parse(localStorage.getItem("history")); 
+            const history = JSON.parse(localStorage.getItem("history"));
             const objectStr = JSON.stringify(object);
 
             localStorage.setItem("history", JSON.stringify([objectStr, ...history]));
@@ -78,12 +88,12 @@ export function Pomodoro(props) {
             if (res) {
                 console.log("sent", res);
 
-                const history = JSON.parse(localStorage.getItem("history")); 
+                const history = JSON.parse(localStorage.getItem("history"));
                 localStorage.setItem("history", JSON.stringify(history.slice(1)));
             }
 
             calendarRef.current.getApi().refetchEvents();
-        } 
+        }
     }
 
     function checkTask() {
@@ -141,13 +151,13 @@ export function Pomodoro(props) {
     function getTimeRemains() {
         switch (state) {
             case "Focus":
-                return props.setting.focusDur - (curTime - startTime);
+                return setting.focusDur - (curTime - startTime);
             case "Short Break":
-                return props.setting.shortBreakDur - (curTime - startTime) + (bonusTime > 0 ? bonusTime : 0);
+                return setting.shortBreakDur - (curTime - startTime) + (bonusTime > 0 ? bonusTime : 0);
             case "Long Break":
-                return props.setting.longBreakDur - (curTime - startTime);
+                return setting.longBreakDur - (curTime - startTime);
             case "":
-                return props.setting.focusDur;
+                return setting.focusDur;
             default:
                 console.log("state invalid");
         };
@@ -171,18 +181,18 @@ export function Pomodoro(props) {
         <div className="pomodoro">
             <div className="h-100 d-flex flex-column justify-content-around align-items-center">
                 <State active={state}></State>
-                <Clock value={props.freezeDoro ? "00:00" : timeRemainsString}></Clock>
+                <Clock value={freezeDoro ? "00:00" : timeRemainsString}></Clock>
                 <div className="d-flex gap-2">
                     {state === "Focus" ?
-                        (focusCount + 1 !== props.setting.maxFocusCount ?
+                        (focusCount + 1 !== setting.maxFocusCount ?
                             <Button click={onShortBreak} value={"Short Break"} /> :
                             <Button click={onLongBreak} value={"Long Break"} />) :
                         <Button click={onFocus} value={"Focus"} addClass={"focus"} />}
                     <Button click={onEnd} value={"End"} />
                 </div>
             </div>
-            <audio ref={audio}>
-                <source src={darlingMp3} type="audio/mpeg" />
+            <audio ref={audioRef}>
+                <source src={audioSrc} type="audio/mpeg" />
             </audio>
         </div>
     )

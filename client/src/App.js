@@ -14,7 +14,7 @@ export function App() {
     const calendarRef = useRef(null);
     const [setting, setSetting] = useState({
         focusDur: 25 * 60 * 1000,
-        shortBreakDur: 5 * 60 * 1000,
+        shortBreakDur: 0.1 * 60 * 1000,
         longBreakDur: 15 * 60 * 1000,
         maxFocusCount: 4,
     });
@@ -33,10 +33,6 @@ export function App() {
     useEffect(() => {
         console.log("calendarRef changed")
     }, [calendarRef])
-
-    function passState(state) {
-        setState(state);
-    };
 
     function getNewCoverPos() {
         const coverPos = ["translateX(100%)", "translateX(-100%)", "translateY(100%)", "translateY(-100%)"];
@@ -87,7 +83,9 @@ export function App() {
             setState,
             calendarRef,
             setting,
-            setSetting
+            setSetting,
+            freezeDoro,
+            setFreezeDoro
         }}>
             <div className="background-container container-fluid text-white">
                 <div className="d-flex justify-content-center">
@@ -104,7 +102,7 @@ export function App() {
 
                     </div>
                     <div className="col d-flex justify-content-center">
-                        <Pomodoro setting={setting} passState={passState} freezeDoro={freezeDoro} />
+                        <Pomodoro />
                     </div>
                     <div className='col'>
                         {state.includes("Break") ? <Reminder /> : ""}

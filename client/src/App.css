@@ -183,7 +183,9 @@ a {
     display: block;
 }
 
-.main-btn:hover {
+.main-btn:hover,
+.main-btn:focus,
+.main-btn:active {
     color: var(--color-main);
 }
 
