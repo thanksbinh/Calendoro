@@ -1,16 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import AppContext from "../javascript/AppContext";
 
-export function TodayGoal(props) {
+export function TodayGoal() {
+    const { calendarRef } = useContext(AppContext);
+
     const [todayGoal, setTodayGoal] = useState(0);
 
     const getTodayGoal = () => {
         console.log("getTodayGoal");
 
-        if (!props.calendarRef.current) {
+        if (!calendarRef.current) {
             console.log('too fast');
             return;
         }
-        let calendarApi = props.calendarRef.current.getApi();
+        let calendarApi = calendarRef.current.getApi();
         let events = calendarApi.getEvents();
         let timeSum = 0;
         for (let event of events) {
@@ -26,14 +29,14 @@ export function TodayGoal(props) {
                 timeSum -= event._instance.range.end - event._instance.range.start;
             }
         }
-        setTodayGoal(Math.ceil(timeSum/(25*60*1000)));
+        setTodayGoal(Math.ceil(timeSum/(30*60*1000)));
     } 
 
     useEffect(() => {
         setTimeout(() => {
             getTodayGoal();
         }, 2000)
-    }, [props]) // eslint-disable-line react-hooks/exhaustive-deps
+    }, [calendarRef]) // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
         <div className='goal text-center'>

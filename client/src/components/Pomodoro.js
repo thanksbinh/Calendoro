@@ -1,17 +1,19 @@
-import React, { useEffect, useState } from "react";
-import PropTypes from 'prop-types';
-import useSound from 'use-sound';
-import toneSound from '../assets/sounds/tone.wav';
+import React, { useContext, useEffect, useRef, useState } from "react";
+import darlingMp3 from '../assets/sounds/darling.mp3';
+import jikangiriMp3 from '../assets/sounds/jikangiri.mp3';
 import axios from "axios";
-import { getCookie } from "./Cookie";
+import { getCookie } from "../javascript/cookie";
+import AppContext from "../javascript/AppContext";
 
 export function Pomodoro(props) {
-    const [state, setState] = useState("");
+    const { state, setState, calendarRef, setting, freezeDoro, setFreezeDoro } = useContext(AppContext);
+
     const [curTime, setCurTime] = useState(new Date());
     const [startTime, setStartTime] = useState(new Date());
     const [focusCount, setFocusCount] = useState(0);
-    const [play] = useSound(toneSound, { volume: 0.6 });
     const [bonusTime, setBonusTime] = useState(0);
+    const audioRef = useRef();
+    const [audioSrc, setAudioSrc] = useState(darlingMp3);
 
     let timeRemains = getTimeRemains();
     let timeRemainsString = getTimeRemainsFormat(timeRemains);
@@ -23,15 +25,29 @@ export function Pomodoro(props) {
     }, [])
 
     useEffect(() => {
-        props.passState(state);
-    }, [props, state])
-
-    useEffect(() => {
         changeTitle(timeRemainsString + " - " + getTask());
-        if (timeRemainsString === "00:00") {
-            play();
+        if (timeRemainsString === "00:02") {
+            setAudioSrc(darlingMp3);
+            playSound();
         }
-    }, [timeRemainsString, play])
+        if (timeRemainsString === "-59:59") {
+            setAudioSrc(jikangiriMp3);
+            playSound();
+
+            setFreezeDoro(true);
+            setTimeout(() => {
+                setFreezeDoro(false);
+                onEnd();
+            }, 4000)
+        }
+    }, [timeRemainsString]) // eslint-disable-line react-hooks/exhaustive-deps
+
+    function playSound() {
+        if (audioRef.current.readyState === 4) {
+            audioRef.current.load();
+            audioRef.current.play();
+        }
+    }
 
     function getTask() {
         let taskInput = document.querySelector('.taskInput').value;
@@ -42,18 +58,42 @@ export function Pomodoro(props) {
         document.title = newTitle;
     }
 
+    // Sent nothing if not logged in
     async function updateHistory() {
         if (state !== "Focus") return;
-        // if (curTime - startTime <= 5*60*1000) return;
+        if (curTime - startTime <= 5 * 60 * 1000) return;
 
         let object = {
-            "userId": JSON.parse(getCookie("profile") || "{}").id,
+            "userId": getCookie("profile") ? JSON.parse(getCookie("profile")).id : "",
             "start": startTime,
             "end": curTime,
             "title": getTask()
         };
-        await axios.post("http://localhost:3001/post", object);
-        console.log("sent", object);
+
+        // Push this object to local history
+        if (!localStorage.getItem("history")) {
+            const objectStr = JSON.stringify(object);
+            localStorage.setItem("history", JSON.stringify([objectStr]))
+        } else {
+            const history = JSON.parse(localStorage.getItem("history"));
+            const objectStr = JSON.stringify(object);
+
+            localStorage.setItem("history", JSON.stringify([objectStr, ...history]));
+        }
+
+        // Push this object to the database if logged in
+        if (getCookie("profile")) {
+            const res = await axios.post("http://localhost:3001/post", object);
+
+            if (res) {
+                console.log("sent", res);
+
+                const history = JSON.parse(localStorage.getItem("history"));
+                localStorage.setItem("history", JSON.stringify(history.slice(1)));
+            }
+
+            calendarRef.current.getApi().refetchEvents();
+        }
     }
 
     function checkTask() {
@@ -111,13 +151,15 @@ export function Pomodoro(props) {
     function getTimeRemains() {
         switch (state) {
             case "Focus":
-                return props.setting.focusDur - (curTime - startTime);
+                return setting.focusDur - (curTime - startTime);
             case "Short Break":
-                return props.setting.shortBreakDur - (curTime - startTime) + (bonusTime > 0 ? bonusTime : 0);
+                return setting.shortBreakDur - (curTime - startTime) + (bonusTime > 0 ? bonusTime : 0);
             case "Long Break":
-                return props.setting.longBreakDur - (curTime - startTime);
+                return setting.longBreakDur - (curTime - startTime);
+            case "":
+                return setting.focusDur;
             default:
-                return props.setting.focusDur;
+                console.log("state invalid");
         };
     }
 
@@ -139,40 +181,29 @@ export function Pomodoro(props) {
         <div className="pomodoro">
             <div className="h-100 d-flex flex-column justify-content-around align-items-center">
                 <State active={state}></State>
-                <Clock value={timeRemainsString}></Clock>
+                <Clock value={freezeDoro ? "00:00" : timeRemainsString}></Clock>
                 <div className="d-flex gap-2">
                     {state === "Focus" ?
-                        (focusCount + 1 !== props.setting.maxFocusCount ?
+                        (focusCount + 1 !== setting.maxFocusCount ?
                             <Button click={onShortBreak} value={"Short Break"} /> :
                             <Button click={onLongBreak} value={"Long Break"} />) :
                         <Button click={onFocus} value={"Focus"} addClass={"focus"} />}
                     <Button click={onEnd} value={"End"} />
                 </div>
             </div>
+            <audio ref={audioRef}>
+                <source src={audioSrc} type="audio/mpeg" />
+            </audio>
         </div>
     )
 }
 
-Pomodoro.protoType = {
-    focusDur: PropTypes.number.isRequired,
-    shortBreakDur: PropTypes.number.isRequired,
-    longBreakDur: PropTypes.number.isRequired,
-    maxFocusCount: PropTypes.number.isRequired,
-}
-
 const State = (props) => {
-    let elements = []
-
-    for (let state of ["Focus", "Short Break", "Long Break"]) {
-        if (state === props.active)
-            elements.push(<li className="list-group-item active" key={state}> {state} </li>)
-        else
-            elements.push(<li className="list-group-item" key={state}> {state} </li>)
-    }
-
     return (
         <ul className="list-group list-group-horizontal">
-            {elements.map((el) => el)}
+            <li className={"list-group-item" + (props.active === "Focus" ? " active" : "")}> Focus </li>
+            <li className={"list-group-item" + (props.active === "Short Break" ? " active" : "")}> Short Break </li>
+            <li className={"list-group-item" + (props.active === "Long Break" ? " active" : "")}> Long Break </li>
         </ul>
     )
 }
