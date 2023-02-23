@@ -1,11 +1,9 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import darlingMp3 from '../assets/sounds/darling.mp3';
 import jikangiriMp3 from '../assets/sounds/jikangiri.mp3';
-import axios from "axios";
-import { getCookie } from "../javascript/cookie";
 import AppContext from "../javascript/AppContext";
 
-export function Pomodoro(props) {
+export function Pomodoro() {
     const { state, setState, calendarRef, setting, freezeDoro, setFreezeDoro } = useContext(AppContext);
 
     const [curTime, setCurTime] = useState(new Date());
@@ -61,39 +59,21 @@ export function Pomodoro(props) {
     // Sent nothing if not logged in
     async function updateHistory() {
         if (state !== "Focus") return;
-        if (curTime - startTime <= 5 * 60 * 1000) return;
+        // if (curTime - startTime <= 5 * 60 * 1000) return;
 
         let object = {
-            "userId": getCookie("profile") ? JSON.parse(getCookie("profile")).id : "",
+            "uid": "",
             "start": startTime,
             "end": curTime,
             "title": getTask()
         };
 
         // Push this object to local history
-        if (!localStorage.getItem("history")) {
-            const objectStr = JSON.stringify(object);
-            localStorage.setItem("history", JSON.stringify([objectStr]))
-        } else {
-            const history = JSON.parse(localStorage.getItem("history"));
-            const objectStr = JSON.stringify(object);
+        const objectStr = JSON.stringify(object);
+        const historyStr = JSON.parse(localStorage.getItem("history"));
+        localStorage.setItem("history", JSON.stringify([objectStr, ...historyStr]));
 
-            localStorage.setItem("history", JSON.stringify([objectStr, ...history]));
-        }
-
-        // Push this object to the database if logged in
-        if (getCookie("profile")) {
-            const res = await axios.post("http://localhost:3001/post", object);
-
-            if (res) {
-                console.log("sent", res);
-
-                const history = JSON.parse(localStorage.getItem("history"));
-                localStorage.setItem("history", JSON.stringify(history.slice(1)));
-            }
-
-            calendarRef.current.getApi().refetchEvents();
-        }
+        calendarRef.current.getApi().refetchEvents();
     }
 
     function checkTask() {

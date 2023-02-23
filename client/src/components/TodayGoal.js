@@ -23,7 +23,7 @@ export function TodayGoal() {
 
             if (eventStart.toDateString() !== new Date().toDateString()) continue;
 
-            if (event._def.extendedProps.userId == null) {
+            if (event._def.extendedProps.uid == null) {
                 timeSum += event._instance.range.end - event._instance.range.start;
             } else {
                 timeSum -= event._instance.range.end - event._instance.range.start;

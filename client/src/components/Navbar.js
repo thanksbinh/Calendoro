@@ -10,19 +10,16 @@ export function Navbar() {
     const [calendarSelectMode, setCalendarSelectMode] = useState(false);
     const [selectedCalendarIdList, selectCalendarIdList] = useState(getCookie("selectedCalendarId") ? getCookie("selectedCalendarId").split(",") : []);
 
-
     function onToggleCalendar() {
         document.querySelector('.fullcalendar').classList.toggle('show');
         document.querySelector('.toggle-calendar-btn').classList.toggle('btn-select');
     }
 
-    async function updateCalendar() {
-        if (!getCookie("user")) return;
-
+    async function updateCalendar(access_token) {
         try {
             const res = await axios.get(`https://www.googleapis.com/calendar/v3/users/me/calendarList`, {
                 headers: {
-                    Authorization: `Bearer ${JSON.parse(getCookie("user")).access_token}`,
+                    Authorization: `Bearer ${access_token}`,
                     Accept: 'application/json'
                 }
             });

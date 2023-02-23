@@ -14,7 +14,7 @@ export function App() {
     const calendarRef = useRef(null);
     const [setting, setSetting] = useState({
         focusDur: 25 * 60 * 1000,
-        shortBreakDur: 0.1 * 60 * 1000,
+        shortBreakDur: 5 * 60 * 1000,
         longBreakDur: 15 * 60 * 1000,
         maxFocusCount: 4,
     });
@@ -28,6 +28,9 @@ export function App() {
         setTimeout(() => {
             setCover(redBackgroundImg);
         }, 350)
+
+        if (!localStorage.getItem("history"))
+            localStorage.setItem("history", JSON.stringify([]))
     }, [])
 
     useEffect(() => {
@@ -41,7 +44,7 @@ export function App() {
     }
 
     useEffect(() => {
-        if (getComputedStyle(document.querySelector(':root')).getPropertyValue("--color-main").includes("rgba(255, 29, 67, 1)")) {
+        if (!getComputedStyle(document.querySelector(':root')).getPropertyValue("--color-main").includes("rgba(32, 120, 254, 1)")) {
             if (state === "Focus" || state === "") {
                 return;
             }
