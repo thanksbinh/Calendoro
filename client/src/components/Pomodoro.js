@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import darlingMp3 from '../assets/sounds/darling.mp3';
 import jikangiriMp3 from '../assets/sounds/jikangiri.mp3';
+import darlingOhayoMp3 from '../assets/sounds/darlingOhayo.mp3';
 import AppContext from "../javascript/AppContext";
 
 export function Pomodoro() {
@@ -10,7 +11,7 @@ export function Pomodoro() {
     const [startTime, setStartTime] = useState(new Date());
     const [focusCount, setFocusCount] = useState(0);
     const [bonusTime, setBonusTime] = useState(0);
-    const audioRef = useRef();
+    const audioRef = useRef(null);
     const [audioSrc, setAudioSrc] = useState(darlingMp3);
 
     let timeRemains = getTimeRemains();
@@ -20,17 +21,22 @@ export function Pomodoro() {
         setInterval(() => {
             setCurTime(new Date());
         }, 10)
+
+        function handleClickWindow() {
+            setAudioSrc(darlingOhayoMp3)
+            window.removeEventListener('click', handleClickWindow);
+        }
+
+        window.addEventListener('click', handleClickWindow);
     }, [])
 
     useEffect(() => {
         changeTitle(timeRemainsString + " - " + getTask());
         if (timeRemainsString === "00:02") {
             setAudioSrc(darlingMp3);
-            playSound();
         }
         if (timeRemainsString === "-59:59") {
             setAudioSrc(jikangiriMp3);
-            playSound();
 
             setFreezeDoro(true);
             setTimeout(() => {
@@ -40,12 +46,12 @@ export function Pomodoro() {
         }
     }, [timeRemainsString]) // eslint-disable-line react-hooks/exhaustive-deps
 
-    function playSound() {
-        if (audioRef.current.readyState === 4) {
+    useEffect(() => {
+        if (audioRef.current.readyState >= 2) {
             audioRef.current.load();
             audioRef.current.play();
         }
-    }
+    }, [audioSrc])
 
     function getTask() {
         let taskInput = document.querySelector('.taskInput').value;

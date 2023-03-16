@@ -5,7 +5,7 @@ import CalendarContext from '../javascript/CalendarContext';
 import AppContext from '../javascript/AppContext';
 import { firebase, auth } from "../firebase/firebase-app";
 import 'firebase/compat/firestore';
-import { collection, addDoc } from "firebase/firestore";
+import { setDoc, doc } from "firebase/firestore";
 
 export function Login() {
     const { setCalendarList, selectedCalendarIdList, selectCalendarIdList, updateCalendar, state } = useContext(CalendarContext);
@@ -78,13 +78,7 @@ export function Login() {
                 uid: data.uid
             };
 
-            const docRef = await addDoc(collection(db, "history"), newData);
-
-            if (docRef.id) {
-                console.log("Data added successfully!");
-            } else {
-                console.log("Error adding data!");
-            }
+            await setDoc(doc(db, "history", newData.uid + newData.start.seconds), newData);
         })
     }
 
