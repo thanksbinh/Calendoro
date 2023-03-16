@@ -33,10 +33,12 @@ export function Pomodoro() {
     useEffect(() => {
         changeTitle(timeRemainsString + " - " + getTask());
         if (timeRemainsString === "00:02") {
-            setAudioSrc(darlingMp3);
+            if (audioSrc === darlingMp3) playAudio()
+            else setAudioSrc(darlingMp3);
         }
         if (timeRemainsString === "-59:59") {
-            setAudioSrc(jikangiriMp3);
+            if (audioSrc === jikangiriMp3) playAudio()
+            else setAudioSrc(jikangiriMp3);
 
             setFreezeDoro(true);
             setTimeout(() => {
@@ -47,11 +49,15 @@ export function Pomodoro() {
     }, [timeRemainsString]) // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
+        playAudio();
+    }, [audioSrc])
+
+    function playAudio() {
         if (audioRef.current.readyState >= 2) {
             audioRef.current.load();
             audioRef.current.play();
         }
-    }, [audioSrc])
+    }
 
     function getTask() {
         let taskInput = document.querySelector('.taskInput').value;
