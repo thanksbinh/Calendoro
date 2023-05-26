@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import darlingMp3 from '../assets/sounds/darling.mp3';
 import jikangiriMp3 from '../assets/sounds/jikangiri.mp3';
-import darlingOhayoMp3 from '../assets/sounds/darlingOhayo.mp3';
 import AppContext from "../javascript/AppContext";
 
 export function Pomodoro() {
@@ -21,13 +20,6 @@ export function Pomodoro() {
         setInterval(() => {
             setCurTime(new Date());
         }, 10)
-
-        function handleClickWindow() {
-            setAudioSrc(darlingOhayoMp3)
-            window.removeEventListener('click', handleClickWindow);
-        }
-
-        window.addEventListener('click', handleClickWindow);
     }, [])
 
     useEffect(() => {

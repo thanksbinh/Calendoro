@@ -1,14 +1,17 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Login } from "./Login";
 import { Setting } from "./Setting";
 import CalendarContext from '../javascript/CalendarContext';
 import { getCookie } from "../javascript/cookie";
 import axios from 'axios';
+import darlingOhayoMp3 from '../assets/sounds/darlingOhayo.mp3';
 
 export function Navbar() {
     const [calendarList, setCalendarList] = useState([]);
     const [calendarSelectMode, setCalendarSelectMode] = useState(false);
     const [selectedCalendarIdList, selectCalendarIdList] = useState(getCookie("selectedCalendarId") ? getCookie("selectedCalendarId").split(",") : []);
+    const audioRef = useRef(null);
+    const audioSrc = darlingOhayoMp3;
 
     function onToggleCalendar() {
         document.querySelector('.fullcalendar').classList.toggle('show');
@@ -32,6 +35,13 @@ export function Navbar() {
         }
     }
 
+    function onClickLogo() {
+        if (audioRef.current.readyState >= 2) {
+            audioRef.current.load();
+            audioRef.current.play();
+        }
+    }
+
     return (
         <CalendarContext.Provider value={{
             calendarList,
@@ -43,11 +53,14 @@ export function Navbar() {
             updateCalendar
         }}>
             <div className="navbar d-flex justify-content-between w-50">
-                <div className="logo-container">
-                    <a href="http://localhost:3000/" className="logo d-flex">
+                <div className="logo-container" onClick={onClickLogo}>
+                    <button className="logo d-flex">
                         <span className="material-symbols-outlined">check_circle</span>
                         <h2>Calendoro</h2>
-                    </a>
+                    </button>
+                    <audio ref={audioRef}>
+                        <source src={audioSrc} type="audio/mpeg" />
+                    </audio>
                 </div>
 
                 <div className="tools d-flex justify-content-end align-items-center h-100">

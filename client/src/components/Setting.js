@@ -1,9 +1,9 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
-import '../style/setting.css';
-import CalendarContext from '../javascript/CalendarContext';
 import AppContext from "../javascript/AppContext";
+import CalendarContext from '../javascript/CalendarContext';
+import '../style/setting.css';
 
 export function Setting() {
     const { updateCalendar } = useContext(CalendarContext);
@@ -49,15 +49,15 @@ export function Setting() {
                         <div className="first-line d-flex justify-content-between">
                             <div className="form-group">
                                 <label className="form-label" htmlFor="value1">Focus</label>
-                                <input className="form-input" type="number" min={0} max={60} id="value1" value={focusDur} onChange={(event) => setFocusDur(event.target.value)} />
+                                <input className="form-input" type="number" min={0} max={59} id="value1" value={focusDur} onChange={(event) => setFocusDur(event.target.value)} />
                             </div>
                             <div className="form-group">
                                 <label className="form-label" htmlFor="value2">Short Break</label>
-                                <input className="form-input" type="number" min={0} max={60} id="value2" value={shortBreakDur} onChange={(event) => setShortBreakDur(event.target.value)} />
+                                <input className="form-input" type="number" min={0} max={59} id="value2" value={shortBreakDur} onChange={(event) => setShortBreakDur(event.target.value)} />
                             </div>
                             <div className="form-group">
                                 <label className="form-label" htmlFor="value3">Long Break</label>
-                                <input className="form-input" type="number" min={0} max={60} id="value3" value={longBreakDur} onChange={(event) => setLongBreakDur(event.target.value)} />
+                                <input className="form-input" type="number" min={0} max={59} id="value3" value={longBreakDur} onChange={(event) => setLongBreakDur(event.target.value)} />
                             </div>
                         </div>
                         <div className="form-group justify-content-between align-items-center">

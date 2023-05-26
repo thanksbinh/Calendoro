@@ -46,6 +46,11 @@ a {
 .logo {
     text-decoration: none !important;
     color: white;
+
+    background: none !important;
+    border: none;
+    padding: 0 !important;
+    cursor: pointer;
 }
 
 .logo span {
@@ -249,4 +254,3 @@ a {
 .popup-warning.show {
     opacity: 1;
 }
-
